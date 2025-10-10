@@ -49,3 +49,10 @@ Desktop.ini
 # personal/
 # private/
 # confidential/
+
+# Secure content directories
+Secure_Content/
+review_needed/
+personal/
+private/
+confidential/
