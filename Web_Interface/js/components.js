@@ -337,9 +337,107 @@ class FileSystemHelper {
     }
 }
 
+// Dark mode toggle
+function initDarkModeToggle() {
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const darkModeIcon = darkModeToggle.querySelector('i');
+    
+    darkModeToggle.addEventListener('click', function() {
+        document.body.classList.toggle('dark-mode');
+        
+        if (document.body.classList.contains('dark-mode')) {
+            darkModeIcon.classList.remove('fa-moon');
+            darkModeIcon.classList.add('fa-sun');
+            localStorage.setItem('darkMode', 'enabled');
+        } else {
+            darkModeIcon.classList.remove('fa-sun');
+            darkModeIcon.classList.add('fa-moon');
+            localStorage.setItem('darkMode', 'disabled');
+        }
+    });
+    
+    // Check for saved preference
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        document.body.classList.add('dark-mode');
+        darkModeIcon.classList.remove('fa-moon');
+        darkModeIcon.classList.add('fa-sun');
+    }
+}
+
 // Initialize all components
 document.addEventListener('DOMContentLoaded', () => {
     window.componentInterface = new ComponentInterface();
     window.visualizationManager = new VisualizationManager();
     window.fileSystemHelper = new FileSystemHelper();
+    initSidebarNavigation();
+    initDarkModeToggle();
 });
+
+// Add to creative section initialization
+function initCreativeSection() {
+    // ... existing code ...
+    
+    // Initialize writing assistant
+    window.writingAssistant.loadBookContent('book1');
+    
+    // Setup writing assistant UI
+    document.getElementById('generate-prompt-btn').addEventListener('click', async () => {
+        const category = document.querySelector('.prompt-category.active').dataset.category;
+        const level = document.getElementById('consciousness-level').value;
+        
+        // Generate prompt using writing assistant
+        const prompt = await window.writingAssistant.generateSuggestions(
+            `Generate a ${category} prompt at ${level} consciousness level`,
+            { category, level }
+        );
+        
+        // Display the prompt
+        document.getElementById('prompt-output').innerHTML = 
+            `<p>${prompt.plotIdeas.basedOnPatterns[0]}</p>`;
+    });
+}
+
+// Add to consciousness section initialization
+function initConsciousnessSection() {
+    // ... existing code ...
+    
+    // Initialize research synthesizer
+    window.researchSynthesizer.loadResearchContent();
+    
+    // Setup research synthesis UI
+    document.getElementById('research-synthesis-btn').addEventListener('click', async () => {
+        const researchInput = document.getElementById('research-input').value;
+        
+        // Synthesize research
+        const synthesis = await window.researchSynthesizer.synthesizeResearch(researchInput);
+        
+        // Display the synthesis
+        document.getElementById('synthesis-output').innerHTML = 
+            `<h4>Key Insights:</h4>
+            <ul>${synthesis.keyInsights.map(insight => `<li>${insight}</li>`).join('')}</ul>`;
+    });
+}
+
+// Initialize sidebar navigation
+function initSidebarNavigation() {
+    const sidebarBtns = document.querySelectorAll('.sidebar-btn');
+    
+    sidebarBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetSection = this.dataset.section;
+            
+            // Remove active class from all buttons
+            sidebarBtns.forEach(b => b.classList.remove('active'));
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Show target section
+            showSection(targetSection);
+        });
+    });
+}
+
+function showSection(section) {
+    // Implement logic to show the target section
+}

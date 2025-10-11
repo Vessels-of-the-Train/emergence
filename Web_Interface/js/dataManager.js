@@ -6,6 +6,7 @@ class DataManager {
         this.lastSync = null;
         this.autoSyncInterval = 5 * 60 * 1000; // 5 minutes
         this.setupAutoSync();
+        this.loadProjectData();
     }
 
     async loadProjectData() {

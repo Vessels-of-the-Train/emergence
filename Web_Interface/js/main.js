@@ -8,10 +8,34 @@ class ProjectEmergence {
     }
 
     init() {
+        this.showLoadingScreen();
         this.setupEventListeners();
         this.loadData();
         this.updateProgressBars();
         this.startAutoRefresh();
+        this.startConsciousnessUpdates();
+
+        // Hide loading screen after initialization
+        setTimeout(() => {
+            this.hideLoadingScreen();
+        }, 1500);
+    }
+
+    showLoadingScreen() {
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+            loadingScreen.style.display = 'flex';
+        }
+    }
+
+    hideLoadingScreen() {
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 500);
+        }
     }
 
     setupEventListeners() {
@@ -41,52 +65,6 @@ class ProjectEmergence {
             this.showSettings();
         });
 
-    setupEventListeners() {
-        // Navigation
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const section = e.target.closest('.nav-btn').dataset.section;
-                this.navigateTo(section);
-            });
-        });
-
-        // Quick actions
-        document.querySelectorAll('.quick-action-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const action = e.target.closest('.quick-action-btn').dataset.action;
-                this.handleQuickAction(action);
-            });
-        });
-
-        // Sync button
-        document.getElementById('syncBtn').addEventListener('click', () => {
-            this.syncWithFileSystem();
-        });
-
-        // Settings button
-        document.getElementById('settingsBtn').addEventListener('click', () => {
-            this.showSettings();
-        });
-
-        // Consciousness Engine Integration
-        if (document.getElementById('process-btn')) {
-            document.getElementById('process-btn').addEventListener('click', () => {
-                this.processConsciousnessInput();
-            });
-        }
-
-        // Character profile buttons
-        document.querySelectorAll('.character-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const characterName = e.target.closest('.character-card').querySelector('h4').textContent;
-                this.showCharacterProfile(characterName);
-            });
-        });
-
-        // Auto-save on changes
-        setInterval(() => {
-            this.autoSave();
-        }, 30000); // Auto-save every 30 seconds
     }
 
     navigateTo(section) {
@@ -232,6 +210,36 @@ class ProjectEmergence {
         }
     }
 
+    async loadAetheriumData() {
+        console.log('Loading Aetherium data...');
+        // Load Aetherium-specific data
+        // In a real implementation, this would fetch from the consciousness engine
+    }
+
+    async loadBooksData() {
+        console.log('Loading Books data...');
+        // Load book series data
+        // In a real implementation, this would fetch from the book management system
+    }
+
+    async loadResearchData() {
+        console.log('Loading Research data...');
+        // Load research data
+        // In a real implementation, this would fetch from the research database
+    }
+
+    async loadManagementData() {
+        console.log('Loading Management data...');
+        // Load project management data
+        // In a real implementation, this would fetch from the project management system
+    }
+
+    async loadPublishingData() {
+        console.log('Loading Publishing data...');
+        // Load publishing data
+        // In a real implementation, this would fetch from the publishing system
+    }
+
     async syncWithFileSystem() {
         const syncBtn = document.getElementById('syncBtn');
         const originalText = syncBtn.innerHTML;
@@ -338,212 +346,14 @@ class ProjectEmergence {
         setInterval(() => {
             this.loadData();
         }, 300000);
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            this.handleKeyboardShortcut(e);
+        });
     }
 
-    // Section-specific data loading
-    loadAetheriumData() {
-        console.log('Loading Aetherium data...');
-        // Load Aetherium-specific data
-    }
-
-    loadBooksData() {
-        console.log('Loading Books data...');
-        // Load book series data
-    }
-
-    loadResearchData() {
-        console.log('Loading Research data...');
-        // Load research data
-    }
-
-    loadManagementData() {
-        console.log('Loading Management data...');
-        // Load project management data
-    }
-
-    loadPublishingData() {
-        console.log('Loading Publishing data...');
-        // Load publishing data
-    }
-
-    // Quick action handlers
-    createNewProtocol() {
-        this.showModal('New Protocol', `
-            <div class="form-group">
-                <label>Protocol Name:</label>
-                <input type="text" class="form-control" placeholder="Enter protocol name">
-            </div>
-            <div class="form-group">
-                <label>Description:</label>
-                <textarea class="form-control" rows="3" placeholder="Brief description"></textarea>
-            </div>
-            <button class="component-btn">Create Protocol</button>
-        `);
-    }
-
-    createNewChapter() {
-        this.showModal('New Chapter', `
-            <div class="form-group">
-                <label>Book:</label>
-                <select class="form-control">
-                    <option>Book 1</option>
-                    <option>Book 2</option>
-                    <option>Book 3</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Chapter Title:</label>
-                <input type="text" class="form-control" placeholder="Chapter title">
-            </div>
-            <button class="component-btn">Start Writing</button>
-        `);
-    }
-
-    logResearch() {
-        this.showModal('Log Research', `
-            <div class="form-group">
-                <label>Research Topic:</label>
-                <input type="text" class="form-control" placeholder="Research topic">
-            </div>
-            <div class="form-group">
-                <label>Findings:</label>
-                <textarea class="form-control" rows="3" placeholder="Key findings"></textarea>
-            </div>
-            <button class="component-btn">Log Research</button>
-        `);
-    }
-
-    updateProgress() {
-        this.showModal('Update Progress', `
-            <div class="form-group">
-                <label>Component:</label>
-                <select class="form-control">
-                    <option>Aetherium System</option>
-                    <option>Book Series</option>
-                    <option>Research</option>
-                    <option>Publishing</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Progress (%):</label>
-                <input type="number" class="form-control" min="0" max="100">
-            </div>
-            <button class="component-btn">Update Progress</button>
-        `);
-    }
-
-    // Enhanced consciousness processing with file system integration
-    async processConsciousnessInput() {
-        const input = document.getElementById('consciousness-input').value.trim();
-        if (!input) {
-            this.showNotification('Please enter some text to process', 'warning');
-            return;
-        }
-
-        // Show processing state
-        const processBtn = document.getElementById('process-btn');
-        const outputDisplay = document.getElementById('consciousness-output');
-
-        processBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        processBtn.disabled = true;
-
-        try {
-            let result;
-
-            // Try file system integration first
-            if (window.fileSystemIntegration && window.fileSystemIntegration.isConnected) {
-                result = await window.fileSystemIntegration.processConsciousnessWithPersistence(input);
-                this.showNotification('Consciousness analysis saved to project files', 'success');
-            } else {
-                // Fallback to unified communication system
-                result = await this.simulateConsciousnessProcessing(input);
-                this.showNotification('Consciousness processing completed', 'info');
-            }
-
-            // Update consciousness status
-            this.updateConsciousnessStatus(result);
-                    <p><strong>Character Updates:</strong> ${result.analysis.character_updates.length} applied</p>
-                    ${result.file_saved ? `<p class="file-saved"><i class="fas fa-save"></i> Saved to: ${result.file_saved}</p>` : ''}
-                    <p class="response-meta">Unified System Integration: ${result.offline ? 'Offline Mode' : 'Active'}</p>
-                </div>
-            `;
-
-            // Update real-time metrics
-            this.updateMetrics();
-
-        } catch (error) {
-            console.error('Consciousness processing error:', error);
-            outputDisplay.innerHTML = '<p class="error">Error in unified communication processing</p>';
-            this.showNotification('Processing error occurred', 'error');
-        } finally {
-            processBtn.innerHTML = '<i class="fas fa-play"></i> Process Input';
-            processBtn.disabled = false;
-        }
-    }
-        // Update consciousness state display
-        const stateEl = document.getElementById('consciousness-state');
-        const cyclesEl = document.getElementById('processing-cycles');
-        const patternsEl = document.getElementById('patterns-detected');
-        const awarenessEl = document.getElementById('awareness-level');
-
-        if (stateEl) stateEl.textContent = context.state;
-        if (cyclesEl) cyclesEl.textContent = context.processing_cycle;
-        if (patternsEl) patternsEl.textContent = context.patterns_detected.length;
-        if (awarenessEl) awarenessEl.textContent = (Math.random() * 0.5 + 0.5).toFixed(1);
-
-        // Update real-time metrics
-        this.updateMetrics();
-    }
-
-    updateMetrics() {
-        // Update real-time metric displays
-        const cyclesEl = document.getElementById('cycles-count');
-        const patternsEl = document.getElementById('patterns-count');
-        const awarenessEl = document.getElementById('awareness-metric');
-
-        if (cyclesEl) cyclesEl.textContent = Math.floor(Math.random() * 50) + 10;
-        if (patternsEl) patternsEl.textContent = Math.floor(Math.random() * 20) + 5;
-        if (awarenessEl) awarenessEl.textContent = (Math.random() * 0.3 + 0.7).toFixed(1);
-    }
-
-    showCharacterProfile(characterName) {
-        const profiles = {
-            'Aria Chen': {
-                archetype: 'The Awakened Observer',
-                description: 'Neuroscientist experiencing consciousness awakening through research and personal experience.',
-                journey: 'From scientific skepticism to profound consciousness awareness',
-                status: '90% Complete'
-            },
-            'Dr. Michael Torres': {
-                archetype: 'The Shadow Integrator',
-                description: 'Clinical psychologist confronting his own shadows while helping others heal.',
-                journey: 'From emotional armor to authentic vulnerability and wisdom',
-                status: '85% Complete'
-            }
-        };
-
-        const profile = profiles[characterName];
-        if (profile) {
-            this.showModal(`${characterName} - Character Profile`, `
-                <div class="character-profile">
-                    <div class="profile-header">
-                        <h3>${characterName}</h3>
-                        <p class="archetype"><strong>Archetype:</strong> ${profile.archetype}</p>
-                    </div>
-                    <div class="profile-content">
-                        <p><strong>Description:</strong> ${profile.description}</p>
-                        <p><strong>Consciousness Journey:</strong> ${profile.journey}</p>
-                        <p><strong>Development Status:</strong> ${profile.status}</p>
-                    </div>
-                    <div class="profile-actions">
-                        <button class="component-btn">Edit Profile</button>
-                    </div>
-                </div>
-            `);
-        }
-    }
-
-    startAutoRefresh() {
+    // Enhanced consciousness flow animation and real-time updates
+    startConsciousnessUpdates() {
         // Start consciousness engine status updates
         setInterval(() => {
             if (this.currentSection === 'aetherium' || this.currentSection === 'overview') {
@@ -555,23 +365,59 @@ class ProjectEmergence {
         this.animateConsciousnessFlow();
     }
 
-    animateConsciousnessFlow() {
-        const nodes = ['input-node', 'consciousness-node', 'awareness-node', 'protocol-node', 'output-node'];
-        let currentIndex = 0;
+    handleKeyboardShortcut(e) {
+        // Only handle shortcuts when not typing in inputs
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            return;
+        }
 
-        setInterval(() => {
-            // Remove active class from all nodes
-            nodes.forEach(nodeId => {
-                const node = document.getElementById(nodeId);
-                if (node) node.classList.remove('active');
-            });
-
-            // Add active class to current node
-            const currentNode = document.getElementById(nodes[currentIndex]);
-            if (currentNode) currentNode.classList.add('active');
-
-            currentIndex = (currentIndex + 1) % nodes.length;
-        }, 2000); // Change every 2 seconds
+        switch(e.key) {
+            case '1':
+                if (e.altKey) {
+                    e.preventDefault();
+                    this.navigateTo('overview');
+                }
+                break;
+            case '2':
+                if (e.altKey) {
+                    e.preventDefault();
+                    this.navigateTo('aetherium');
+                }
+                break;
+            case '3':
+                if (e.altKey) {
+                    e.preventDefault();
+                    this.navigateTo('books');
+                }
+                break;
+            case '4':
+                if (e.altKey) {
+                    e.preventDefault();
+                    this.navigateTo('research');
+                }
+                break;
+            case '5':
+                if (e.altKey) {
+                    e.preventDefault();
+                    this.navigateTo('management');
+                }
+                break;
+            case 'p':
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    this.processConsciousnessInput();
+                }
+                break;
+            case 's':
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    this.syncWithFileSystem();
+                }
+                break;
+            case 'Escape':
+                this.closeModal();
+                break;
+        }
     }
 
     delay(ms) {
