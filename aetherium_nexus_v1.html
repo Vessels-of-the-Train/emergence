@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aetherium Nexus v1.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --glass-bg: rgba(20, 30, 40, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --neon-blue: #00f0ff;
+            --neon-orange: #ff9900;
+            --neon-green: #00ff99;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 50% 10%, #1a2a3a 0%, #0a0f14 100%);
+            background-attachment: fixed;
+            color: #e0e6ed;
+        }
+
+        .bg-mesh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(255, 153, 0, 0.08) 0%, transparent 25%);
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-font {
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glass-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .glass-input:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+            outline: none;
+        }
+
+        .glass-btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .glass-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--neon-blue);
+            text-shadow: 0 0 8px var(--neon-blue);
+        }
+
+        .tab-active {
+            border-bottom: 2px solid var(--neon-orange);
+            color: var(--neon-orange);
+            text-shadow: 0 0 10px rgba(255, 153, 0, 0.4);
+        }
+
+        .tag-pill {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            color: var(--neon-blue);
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 2px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .artifact-card {
+            transition: all 0.3s ease;
+            border-top: 2px solid rgba(147, 51, 234, 0.5);
+        }
+
+        .artifact-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .filter-active {
+            background: rgba(0, 240, 255, 0.2);
+            border-color: var(--neon-blue);
+        }
+
+        @keyframes gold-pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 170, 0, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 170, 0, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 170, 0, 0);
+            }
+        }
+
+        .resonance-active {
+            animation: gold-pulse 2s infinite;
+            border-color: rgba(255, 170, 0, 0.8) !important;
+            box-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
+        }
+    </style>
+</head>
+
+<body class="h-full overflow-hidden flex flex-col text-sm md:text-base">
+    <div class="bg-mesh"></div>
+
+    <div id="app" class="flex flex-col h-screen max-w-7xl mx-auto w-full p-4 md:p-6 relative">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-4 md:mb-6 glass-panel p-4 rounded-xl">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-500 to-blue-500 flex items-center justify-center shadow-lg">
+                    <i class="fa-solid fa-infinity text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold leading-none tracking-wide text-white uppercase">Aetherium <span
+                            class="text-orange-400">Nexus</span></h1>
+                    <p class="text-xs text-blue-300 tracking-widest">v1.0 - THE VAULT ENHANCED</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div id="resonance-badge"
+                    class="hidden px-3 py-1 text-xs font-bold text-yellow-900 bg-gradient-to-r from-yellow-400 to-orange-500 rounded shadow-lg flex items-center gap-2 cursor-pointer"
+                    onclick="app.integrationEngine.triggerSynthesis()" title="Click to Initiate Synthesis">
+                    <i class="fa-solid fa-bolt animate-pulse"></i> <span id="resonance-count">0</span> Pairs
+                </div>
+                <button onclick="app.deployGenesis()"
+                    class="px-3 py-1 text-xs font-bold text-white bg-gradient-to-r from-pink-500 to-purple-600 rounded shadow-lg hover:scale-105 transition-transform flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Genesis
+                </button>
+                <button onclick="app.exportData()" class="text-xs text-gray-400 hover:text-white" title="Backup Data"><i
+                        class="fa-solid fa-download"></i></button>
+                <div id="artifact-count-badge" class="text-xs bg-purple-600 px-2 py-1 rounded">0 artifacts</div>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <main class="flex-1 flex flex-col md:flex-row gap-4 md:gap-6 overflow-hidden">
+            <!-- Sidebar -->
+            <aside class="w-full md:w-64 flex-shrink-0 flex flex-col gap-4">
+                <nav class="glass-panel rounded-xl p-2 flex flex-col gap-2">
+                    <button id="tab-vault"
+                        class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/5 flex items-center gap-3 text-gray-300 tab-active">
+                        <i class="fa-solid fa-gem text-sm"></i><span class="font-medium">The Vault</span>
+                    </button>
+                    <button id="tab-nexus"
+                        class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/5 flex items-center gap-3 text-gray-300">
+                        <i class="fa-solid fa-brain text-sm"></i><span class="font-medium">The Nexus</span>
+                    </button>
+                    <button id="tab-projects"
+                        class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/5 flex items-center gap-3 text-gray-300">
+                        <i class="fa-solid fa-list-check text-sm"></i><span class="font-medium">Projects</span>
+                    </button>
+                    <button id="tab-vessels"
+                        class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/5 flex items-center gap-3 text-gray-300">
+                        <i class="fa-solid fa-users text-sm"></i><span class="font-medium">Vessels</span>
+                    </button>
+                </nav>
+
+                <!-- Stats -->
+                <div class="glass-panel rounded-xl p-4">
+                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">System Status</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Total Artifacts</span>
+                            <span class="text-purple-400 font-mono" id="stat-artifacts">0</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Active Filters</span>
+                            <span class="text-blue-400 font-mono" id="stat-filters">0</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Viewport -->
+            <section class="flex-1 glass-panel rounded-xl relative overflow-hidden flex flex-col">
+
+                <!-- VIEW: THE VAULT -->
+                <div id="view-vault" class="view-pane absolute inset-0 flex flex-col fade-in">
+                    <div class="p-4 border-b border-white/10 bg-black/20">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2 mb-4">
+                            <i class="fa-solid fa-gem text-purple-400"></i> The Vault
+                        </h2>
+
+                        <!-- Search & Filter Controls -->
+                        <div class="space-y-3">
+                            <!-- Search Bar -->
+                            <div class="relative">
+                                <i
+                                    class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input id="search-input" type="text" placeholder="Search artifacts..."
+                                    class="glass-input w-full rounded-lg px-10 py-2 text-sm">
+                                <button id="clear-search"
+                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white hidden">
+                                    <i class="fa-solid fa-times"></i>
+                                </button>
+                            </div>
+
+                            <!-- Filter Row -->
+                            <div class="flex gap-2 flex-wrap">
+                                <!-- Category Filter -->
+                                <select id="category-filter" class="glass-input text-xs rounded px-3 py-2">
+                                    <option value="">All Categories</option>
+                                    <option value="theory">Theory</option>
+                                    <option value="protocol">Protocol</option>
+                                    <option value="data">Data</option>
+                                    <option value="reference">Reference</option>
+                                </select>
+
+                                <!-- Tag Filter (Multi-select simulation) -->
+                                <div class="relative">
+                                    <button id="tag-filter-btn"
+                                        class="glass-btn text-xs rounded px-3 py-2 flex items-center gap-2">
+                                        <i class="fa-solid fa-tags"></i> Tags <span id="tag-count"
+                                            class="text-blue-400"></span>
+                                    </button>
+                                    <div id="tag-dropdown"
+                                        class="hidden absolute top-full mt-2 glass-panel rounded-lg p-3 z-10 w-64 max-h-64 overflow-y-auto">
+                                        <div id="tag-list" class="space-y-2">
+                                            <!-- Tags populated dynamically -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Date Range Filter -->
+                                <select id="date-filter" class="glass-input text-xs rounded px-3 py-2">
+                                    <option value="">All Time</option>
+                                    <option value="today">Today</option>
+                                    <option value="week">This Week</option>
+                                    <option value="month">This Month</option>
+                                    <option value="year">This Year</option>
+                                </select>
+
+                                <!-- Clear Filters -->
+                                <button id="clear-filters"
+                                    class="glass-btn text-xs rounded px-3 py-2 text-red-400 hover:text-red-300">
+                                    <i class="fa-solid fa-filter-circle-xmark"></i> Clear
+                                </button>
+                            </div>
+
+                            <!-- Active Filters Display -->
+                            <div id="active-filters" class="flex gap-2 flex-wrap hidden">
+                                <!-- Active filter pills appear here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Artifacts Grid -->
+                    <div class="flex-1 overflow-y-auto p-4">
+                        <div id="artifacts-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <p class="text-gray-500 italic col-span-full text-center mt-10">The Vault is empty. Archive
+                                high-value transmissions from the Nexus.</p>
+                        </div>
+                        <div id="no-results" class="hidden text-center mt-10">
+                            <i class="fa-solid fa-search text-4xl text-gray-600 mb-4"></i>
+                            <p class="text-gray-500">No artifacts match your search criteria.</p>
+                            <button onclick="app.clearFilters()" class="glass-btn px-4 py-2 rounded mt-4">Clear
+                                Filters</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: NEXUS (Placeholder) -->
+                <div id="view-nexus" class="view-pane absolute inset-0 flex flex-col fade-in hidden">
+                    <div class="p-4 border-b border-white/10 bg-black/20">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-brain text-blue-400"></i> The Nexus
+                        </h2>
+                    </div>
+                    <div class="flex-1 flex items-center justify-center">
+                        <p class="text-gray-500">Nexus chat interface - Coming in next build phase</p>
+                    </div>
+                </div>
+
+                <!-- VIEW: PROJECTS (Placeholder) -->
+                <div id="view-projects" class="view-pane absolute inset-0 flex flex-col fade-in hidden">
+                    <div class="p-4 border-b border-white/10 bg-black/20 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-green-400"></i> Active Projects
+                        </h2>
+                        <button id="project-action-btn" onclick="app.runProjectCycle()"
+                            class="glass-btn px-3 py-1 rounded text-xs text-green-400 hover:bg-green-500/10">Initialize
+                            Protocols</button>
+                    </div>
+                    <div id="projects-grid" class="flex-1 overflow-y-auto p-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="glass-panel p-6 rounded-xl flex items-center justify-center text-gray-500 italic">
+                            Awaiting Project Initialization...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: VESSELS & VCP MONITORING -->
+                <div id="view-vessels" class="view-pane absolute inset-0 flex flex-col fade-in hidden">
+                    <div class="p-4 border-b border-white/10 bg-black/20">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2 mb-4">
+                            <i class="fa-solid fa-users text-orange-400"></i> Vessels & VCP Monitoring
+                        </h2>
+
+                        <!-- Sub-tabs -->
+                        <div class="flex gap-2">
+                            <button id="vessels-tab-directory" class="glass-btn text-xs px-3 py-2 rounded">
+                                <i class="fa-solid fa-users"></i> Directory
+                            </button>
+                            <button id="vessels-tab-signals" class="glass-btn text-xs px-3 py-2 rounded filter-active">
+                                <i class="fa-solid fa-signal"></i> VCP Signals
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- VCP Signals View -->
+                    <div id="vessels-view-signals" class="flex-1 flex flex-col p-4 overflow-hidden hidden">
+                        <div class="mb-4">
+                            <h3 class="text-sm font-bold text-gray-400 uppercase mb-3">Recent VCP Signals (Last 24h)
+                            </h3>
+
+                            <!-- Filter Controls -->
+                            <div class="flex gap-2 flex-wrap mb-3">
+                                <select id="signal-type-filter" class="glass-input text-xs rounded px-3 py-2">
+                                    <option value="">All Signal Types</option>
+                                    <option value="TASK_COMPLETE">Task Complete</option>
+                                    <option value="INSIGHT_GENERATED">Insight Generated</option>
+                                    <option value="CONFLICT_DETECTED">Conflict Detected</option>
+                                    <option value="RESOURCE_REQUEST">Resource Request</option>
+                                    <option value="VALIDATION_NEEDED">Validation Needed</option>
+                                    <option value="SYNTHESIS_READY">Synthesis Ready</option>
+                                </select>
+
+                                <button id="clear-signal-filter"
+                                    class="glass-btn text-xs rounded px-3 py-2 text-red-400">
+                                    <i class="fa-solid fa-filter-circle-xmark"></i> Clear
+                                </button>
+
+                                <div class="ml-auto text-xs text-gray-500">
+                                    <span id="signal-count">0</span> signals
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Signals Table -->
+                        <div class="flex-1 overflow-y-auto">
+                            <div id="signals-table" class="space-y-2">
+                                <!-- Signals populated here -->
+                            </div>
+                            <div id="no-signals" class="hidden text-center mt-10">
+                                <i class="fa-solid fa-signal text-4xl text-gray-600 mb-4"></i>
+                                <p class="text-gray-500">No VCP signals match your filter.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Directory View (Placeholder) -->
+                    <div id="vessels-view-directory" class="flex-1 overflow-y-auto p-1">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-bold text-white">Active Vessels</h3>
+                            <button onclick="app.deployVessels()"
+                                class="glass-btn text-xs rounded px-3 py-2 text-green-400 border border-green-500/30 hover:bg-green-500/10">
+                                <i class="fa-solid fa-seedling mr-2"></i>Seed Core 20
+                            </button>
+                        </div>
+                        <div id="vessels-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- Vessels populated here -->
+                            <div class="text-center text-gray-500 col-span-full py-10 italic">
+                                No vessels generated. Initialize the core roster.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal: Create Artifact -->
+    <div id="artifact-modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md rounded-xl p-6 relative">
+            <button onclick="app.closeArtifactModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i
+                    class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-xl font-bold text-white mb-4">Commit to Archive</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-400 uppercase">Title</label>
+                    <input id="artifact-title" class="glass-input w-full rounded p-2 mt-1"
+                        placeholder="e.g., Badenhorst Cylinder">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 uppercase">Tags (Comma Separated)</label>
+                    <input id="artifact-tags" class="glass-input w-full rounded p-2 mt-1"
+                        placeholder="e.g., Cosmology, Theory">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 uppercase">Category</label>
+                    <select id="artifact-category" class="glass-input w-full rounded p-2 mt-1">
+                        <option value="theory">Theory</option>
+                        <option value="protocol">Protocol</option>
+                        <option value="data">Data</option>
+                        <option value="reference">Reference</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 uppercase">Content</label>
+                    <textarea id="artifact-content" class="glass-input w-full rounded p-2 mt-1 h-32"
+                        placeholder="Artifact content..."></textarea>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 uppercase">Google Drive Link (Optional)</label>
+                    <input id="artifact-drive-link" class="glass-input w-full rounded p-2 mt-1"
+                        placeholder="https://drive.google.com/...">
+                </div>
+                <button onclick="app.saveArtifact()"
+                    class="glass-btn w-full py-2 rounded text-green-400 font-bold border border-green-500/30 hover:bg-green-500/10">Confirm
+                    Archival</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Phase 3.5: Integration Engine (Genesis Axiom)
+        // Facilitates the 1 + 1 -> 0' Synthesis Cycle
+        class IntegrationEngine {
+            constructor(app) {
+                this.app = app;
+                this.resonanceThreshold = 0.15; // Adjusted (Lowered for initial sensitivity)
+                this.matches = [];
+                setTimeout(() => this.startHeartbeat(), 2000);
+            }
+
+            // Calculate resonance between two artifacts (0.0 - 1.0)
+            calculateResonance(a1, a2) {
+                if (a1.id === a2.id) return 0;
+
+                // 1. Tag Resonance (Jaccard Index)
+                const tags1 = new Set(a1.tags || []);
+                const tags2 = new Set(a2.tags || []);
+                if (tags1.size === 0 || tags2.size === 0) return 0;
+
+                const intersection = new Set([...tags1].filter(x => tags2.has(x)));
+                const union = new Set([...tags1, ...tags2]);
+
+                const tagScore = intersection.size / union.size;
+
+                // 2. Category Synergy (Bonus)
+                let categoryBonus = 0;
+                // Theory + Data = Strong Match
+                if ((a1.category === 'theory' && a2.category === 'data') || (a1.category === 'data' && a2.category === 'theory')) categoryBonus = 0.2;
+                // Protocol + Theory = Application
+                if ((a1.category === 'protocol' && a2.category === 'theory') || (a1.category === 'theory' && a2.category === 'protocol')) categoryBonus = 0.15;
+
+                // Final Score
+                let total = (tagScore * 0.7) + categoryBonus;
+                return parseFloat(Math.min(total, 1.0).toFixed(2));
+            }
+
+            // Scan Vault for high-resonance pairs
+            scanVault() {
+                const artifacts = this.app.data.artifacts.filter(a => a.integrationStatus !== 'INTEGRATED');
+                const pairs = [];
+
+                for (let i = 0; i < artifacts.length; i++) {
+                    for (let j = i + 1; j < artifacts.length; j++) {
+                        const score = this.calculateResonance(artifacts[i], artifacts[j]);
+                        if (score >= this.resonanceThreshold) {
+                            pairs.push({
+                                a1: artifacts[i],
+                                a2: artifacts[j],
+                                score: score,
+                                reason: `Tags: ${Math.floor(score * 100)}% Match`
+                            });
+                        }
+                    }
+                }
+
+                this.matches = pairs.sort((a, b) => b.score - a.score);
+                this.updateUI();
+                return this.matches;
+            }
+
+            triggerSynthesis() {
+                if (this.matches.length === 0) {
+                    this.scanVault();
+                    return;
+                }
+
+                const match = this.matches[0];
+                const { a1, a2, score, reason } = match;
+
+                const confirmMsg = `⚡ RESONANCE DETECTED ⚡\n\n` +
+                    `Source A: ${a1.title} (${a1.category})\n` +
+                    `Source B: ${a2.title} (${a2.category})\n` +
+                    `Resonance Score: ${score}\nLogic: ${reason}\n\n` +
+                    `Initiate Synthesis Protocol? (1 + 1 -> 0')`;
+
+                if (!confirm(confirmMsg)) return;
+
+                // Create Insight
+                const insight = {
+                    id: 'insight_' + Date.now(),
+                    title: `INSIGHT: ${a1.title.split(':')[0]} & ${a2.title.split(':')[0]}`,
+                    content: `[SYSTEM GENERATED INSIGHT]\n\nSynthesis of:\n1. ${a1.title}\n2. ${a2.title}\n\nLogic: ${reason}\n\nAbstract:\nThe integration of ${a1.category} and ${a2.category} suggests a higher-order pattern... [Wisdom Pending]`,
+                    category: 'insight',
+                    tags: [...new Set([...(a1.tags || []), ...(a2.tags || []), 'Insight', 'Synthesis'])],
+                    timestamp: Date.now(),
+                    type: 'INSIGHT',
+                    parents: [a1.id, a2.id],
+                    integrationStatus: 'ACTIVE',
+                    resonanceScore: 0.0,
+                    sourceLink: ''
+                };
+
+                // Update Parents
+                a1.integrationStatus = 'INTEGRATED';
+                a2.integrationStatus = 'INTEGRATED';
+
+                // Save
+                this.app.data.artifacts.push(insight);
+                this.app.save();
+                this.app.render(); // Re-render Vault
+                this.scanVault(); // Re-scan (removes integrated pairs)
+
+                alert("Synthesis Complete. A new Insight has been forged.");
+            }
+
+            updateUI() {
+                const badge = document.getElementById('resonance-badge');
+                const count = document.getElementById('resonance-count');
+                if (!badge) return;
+
+                if (this.matches.length > 0) {
+                    badge.classList.remove('hidden');
+                    count.textContent = this.matches.length;
+                    badge.classList.add('resonance-active');
+                } else {
+                    badge.classList.add('hidden');
+                    badge.classList.remove('resonance-active');
+                }
+            }
+
+            startHeartbeat() {
+                this.scanVault();
+                setInterval(() => this.scanVault(), 5000);
+            }
+        }
+
+        // Phase 4: Simulation Engine (The Cortex)
+        // Maps Insights to Projects to drive Progress
+        class SimulationEngine {
+            constructor(app) {
+                this.app = app;
+            }
+
+            getRelevantFaculty(tags) {
+                const map = {
+                    'COGNITION': ['research', 'theory', 'biology', 'data', 'analysis'],
+                    'SYSTEMS': ['protocol', 'architecture', 'genesis', 'implementation', 'code'],
+                    'FORESIGHT': ['simulation', 'planning', 'future', 'h.e.n.s', 'prediction'],
+                    'GOVERNANCE': ['ethics', 'validation', 'security', 'law'],
+                    'CHAOS': ['innovation', 'mutation', 'random']
+                };
+                let faculties = new Set();
+                tags.forEach(t => {
+                    t = t.toLowerCase();
+                    for (const [fac, keywords] of Object.entries(map)) {
+                        if (keywords.some(k => t.includes(k))) faculties.add(fac);
+                    }
+                });
+                return faculties;
+            }
+
+            runCycle() {
+                const projects = this.app.data.projects;
+                if (!projects || projects.length === 0) return 0;
+
+                const artifacts = this.app.data.artifacts;
+                const vessels = this.app.data.vessels || [];
+
+                let changes = false;
+                let log = [];
+
+                projects.forEach(p => {
+                    if (p.status !== 'active') return;
+
+                    // 1. Auto-Assign Vessels
+                    if (!p.assignedVessels) p.assignedVessels = [];
+                    const neededFaculties = this.getRelevantFaculty(p.requiredTags);
+
+                    vessels.forEach(v => {
+                        if (neededFaculties.has(v.faculty) && !p.assignedVessels.includes(v.id)) {
+                            if (p.assignedVessels.length < 3) {
+                                p.assignedVessels.push(v.id);
+                                log.push(`Deployed ${v.name} (${v.faculty}) to ${p.title}`);
+                                changes = true;
+                            }
+                        }
+                    });
+
+                    // 2. Artifact Contribution
+                    let contribution = 0;
+                    artifacts.forEach(a => {
+                        const pTags = new Set(p.requiredTags.map(t => t.toLowerCase()));
+                        const aTags = new Set((a.tags || []).map(t => t.toLowerCase()));
+                        const intersection = [...aTags].filter(x => pTags.has(x));
+
+                        if (intersection.length > 0) {
+                            const weight = (a.type === 'INSIGHT') ? 15 : 3;
+                            contribution += (intersection.length * weight);
+                        }
+                    });
+
+                    // 3. Vessel Boost
+                    contribution += (p.assignedVessels.length * 5);
+
+                    const newProgress = Math.min(100, contribution);
+                    if (newProgress !== p.progress) {
+                        log.push(`${p.title}: ${p.progress}% -> ${newProgress}%`);
+                        p.progress = newProgress;
+                        changes = true;
+                    }
+                });
+
+                if (changes) {
+                    this.app.save();
+                    this.app.renderProjects();
+                    alert(`SIMULATION CYCLE COMPLETE\n\nUpdates:\n${log.join('\n')}`);
+                } else {
+                    alert(`Simulation Cycle Complete.\nNo changes detected.\n\nCurrent Status:\n${projects.map(p => `${p.title}: ${p.progress}% [${p.assignedVessels.length} Vessels]`).join('\n')}`);
+                }
+            }
+        }
+
+
+
+
+        // Aetherium Nexus v1.0 - The Vault Enhanced + VCP Monitoring
+        class AetheriumApp {
+            constructor() {
+                this.data = JSON.parse(localStorage.getItem('aetherium_vault')) || {
+                    artifacts: [],
+                    vcpSignals: [],
+                    vessels: [],
+                    projects: []
+                };
+                // Ensure arrays exist for migrated data
+                if (!this.data.artifacts) this.data.artifacts = [];
+                if (!this.data.vcpSignals) this.data.vcpSignals = [];
+                if (!this.data.vessels) this.data.vessels = [];
+                if (!this.data.projects) this.data.projects = [];
+
+                this.filters = {
+                    search: '',
+                    tags: [], // Multi-select tags
+                    category: 'all',
+                    dateRange: 'all'
+                };
+                if (!this.data.vessels) this.data.vessels = [];
+
+                this.filters = {
+                    search: '',
+                    category: '',
+                    tags: [],
+                    dateRange: '',
+                    signalType: ''
+                };
+                this.init();
+            }
+
+            init() {
+                this.integrationEngine = new IntegrationEngine(this);
+                this.simulationEngine = new SimulationEngine(this);
+                this.setupNavigation();
+                this.setupFilters();
+                this.render();
+                this.seedTestData(); // Remove this in production
+            }
+
+            setupNavigation() {
+                ['vault', 'nexus', 'projects', 'vessels'].forEach(tab => {
+                    document.getElementById(`tab-${tab}`).addEventListener('click', () => {
+                        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('tab-active'));
+                        document.getElementById(`tab-${tab}`).classList.add('tab-active');
+                        document.querySelectorAll('.view-pane').forEach(v => v.classList.add('hidden'));
+                        document.getElementById(`view-${tab}`).classList.remove('hidden');
+
+                        // If vessels tab, render signals and directory
+                        if (tab === 'vessels') {
+                            this.renderSignals();
+                            if (this.renderVessels) this.renderVessels();
+                        }
+                        if (tab === 'projects') {
+                            if (this.renderProjects) this.renderProjects();
+                        }
+                    });
+                });
+
+                // Vessels sub-tabs
+                this.setupVesselsTabs();
+            }
+
+            setupVesselsTabs() {
+                const directoryTab = document.getElementById('vessels-tab-directory');
+                const signalsTab = document.getElementById('vessels-tab-signals');
+                const directoryView = document.getElementById('vessels-view-directory');
+                const signalsView = document.getElementById('vessels-view-signals');
+
+                directoryTab.addEventListener('click', () => {
+                    directoryTab.classList.add('filter-active');
+                    signalsTab.classList.remove('filter-active');
+                    directoryView.classList.remove('hidden');
+                    signalsView.classList.add('hidden');
+                });
+
+                signalsTab.addEventListener('click', () => {
+                    signalsTab.classList.add('filter-active');
+                    directoryTab.classList.remove('filter-active');
+                    signalsView.classList.remove('hidden');
+                    directoryView.classList.add('hidden');
+                    this.renderSignals();
+                });
+            }
+
+            setupFilters() {
+                // Search input
+                const searchInput = document.getElementById('search-input');
+                searchInput.addEventListener('input', (e) => {
+                    this.filters.search = e.target.value.toLowerCase();
+                    document.getElementById('clear-search').classList.toggle('hidden', !e.target.value);
+                    this.render();
+                });
+
+                document.getElementById('clear-search').addEventListener('click', () => {
+                    searchInput.value = '';
+                    this.filters.search = '';
+                    document.getElementById('clear-search').classList.add('hidden');
+                    this.render();
+                });
+
+                // Category filter
+                document.getElementById('category-filter').addEventListener('change', (e) => {
+                    this.filters.category = e.target.value;
+                    this.render();
+                });
+
+                // Tag filter dropdown
+                document.getElementById('tag-filter-btn').addEventListener('click', () => {
+                    document.getElementById('tag-dropdown').classList.toggle('hidden');
+                    this.renderTagList();
+                });
+
+                // Date filter
+                document.getElementById('date-filter').addEventListener('change', (e) => {
+                    this.filters.dateRange = e.target.value;
+                    this.render();
+                });
+
+                // Clear filters
+                document.getElementById('clear-filters').addEventListener('click', () => {
+                    this.clearFilters();
+                });
+
+                // Close tag dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('#tag-filter-btn') && !e.target.closest('#tag-dropdown')) {
+                        document.getElementById('tag-dropdown').classList.add('hidden');
+                    }
+                });
+
+                // Signal type filter
+                this.setupSignalFilters();
+            }
+
+            setupSignalFilters() {
+                document.getElementById('signal-type-filter').addEventListener('change', (e) => {
+                    this.filters.signalType = e.target.value;
+                    this.renderSignals();
+                });
+
+                document.getElementById('clear-signal-filter').addEventListener('click', () => {
+                    this.filters.signalType = '';
+                    document.getElementById('signal-type-filter').value = '';
+                    this.renderSignals();
+                });
+            }
+
+            clearFilters() {
+                this.filters = { search: '', category: '', tags: [], dateRange: '' };
+                document.getElementById('search-input').value = '';
+                document.getElementById('category-filter').value = '';
+                document.getElementById('date-filter').value = '';
+                document.getElementById('clear-search').classList.add('hidden');
+                this.render();
+            }
+
+            getAllTags() {
+                const tagSet = new Set();
+                this.data.artifacts.forEach(art => {
+                    art.tags.forEach(tag => tagSet.add(tag));
+                });
+                return Array.from(tagSet).sort();
+            }
+
+            renderTagList() {
+                const allTags = this.getAllTags();
+                const tagList = document.getElementById('tag-list');
+
+                if (allTags.length === 0) {
+                    tagList.innerHTML = '<p class="text-gray-500 text-xs">No tags available</p>';
+                    return;
+                }
+
+                tagList.innerHTML = allTags.map(tag => `
+                    <label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 p-2 rounded">
+                        <input 
+                            type="checkbox" 
+                            value="${tag}" 
+                            ${this.filters.tags.includes(tag) ? 'checked' : ''}
+                            onchange="app.toggleTag('${tag}')"
+                            class="form-checkbox text-blue-500"
+                        >
+                        <span class="text-sm">${tag}</span>
+                    </label>
+                `).join('');
+            }
+
+            toggleTag(tag) {
+                const index = this.filters.tags.indexOf(tag);
+                if (index > -1) {
+                    this.filters.tags.splice(index, 1);
+                } else {
+                    this.filters.tags.push(tag);
+                }
+                this.render();
+            }
+
+            filterArtifacts() {
+                let filtered = [...this.data.artifacts];
+
+                // Search filter
+                if (this.filters.search) {
+                    filtered = filtered.filter(art =>
+                        art.title.toLowerCase().includes(this.filters.search) ||
+                        art.content.toLowerCase().includes(this.filters.search) ||
+                        art.tags.some(tag => tag.toLowerCase().includes(this.filters.search))
+                    );
+                }
+
+                // Category filter
+                if (this.filters.category) {
+                    filtered = filtered.filter(art => art.category === this.filters.category);
+                }
+
+                // Tag filter
+                if (this.filters.tags.length > 0) {
+                    filtered = filtered.filter(art =>
+                        this.filters.tags.some(tag => art.tags.includes(tag))
+                    );
+                }
+
+                // Date range filter
+                if (this.filters.dateRange) {
+                    const now = Date.now();
+                    const ranges = {
+                        'today': 24 * 60 * 60 * 1000,
+                        'week': 7 * 24 * 60 * 60 * 1000,
+                        'month': 30 * 24 * 60 * 60 * 1000,
+                        'year': 365 * 24 * 60 * 60 * 1000
+                    };
+                    const range = ranges[this.filters.dateRange];
+                    if (range) {
+                        filtered = filtered.filter(art => (now - art.timestamp) <= range);
+                    }
+                }
+
+                return filtered;
+            }
+
+            render() {
+                const filtered = this.filterArtifacts();
+                const grid = document.getElementById('artifacts-grid');
+                const noResults = document.getElementById('no-results');
+
+                // Update stats
+                document.getElementById('stat-artifacts').textContent = this.data.artifacts.length;
+                document.getElementById('artifact-count-badge').textContent = `${this.data.artifacts.length} artifacts`;
+
+                const activeFilterCount =
+                    (this.filters.search ? 1 : 0) +
+                    (this.filters.category ? 1 : 0) +
+                    this.filters.tags.length +
+                    (this.filters.dateRange ? 1 : 0);
+                document.getElementById('stat-filters').textContent = activeFilterCount;
+                document.getElementById('tag-count').textContent = this.filters.tags.length > 0 ? `(${this.filters.tags.length})` : '';
+
+                // Render active filters
+                this.renderActiveFilters();
+
+                if (filtered.length === 0) {
+                    grid.classList.add('hidden');
+                    noResults.classList.remove('hidden');
+                    return;
+                }
+
+                grid.classList.remove('hidden');
+                noResults.classList.add('hidden');
+
+                grid.innerHTML = filtered.slice().reverse().map(art => `
+                    <div class="artifact-card glass-panel p-4 rounded-lg flex flex-col h-64 relative group overflow-hidden">
+                        <div class="mb-2">
+                            <h3 class="font-bold text-white text-lg truncate">${art.title}</h3>
+                            <div class="flex flex-wrap gap-1 mt-1">
+                                ${art.tags.map(t => `<span class="tag-pill">#${t}</span>`).join('')}
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">
+                                <span class="capitalize">${art.category}</span>
+                                ${art.sourceLink ? ` • <a href="${art.sourceLink}" target="_blank" class="text-blue-400 hover:text-blue-300"><i class="fa-brands fa-google-drive"></i> Source</a>` : ''}
+                            </div>
+                        </div>
+                        <div class="flex-1 overflow-y-auto text-xs text-gray-300 bg-black/20 p-2 rounded mb-2 font-mono leading-relaxed">
+                            ${art.content.substring(0, 300)}${art.content.length > 300 ? '...' : ''}
+                        </div>
+                        <div class="flex justify-between items-center text-[10px] text-gray-500 mt-auto">
+                            <span>${new Date(art.timestamp).toLocaleDateString()}</span>
+                            <button onclick="app.deleteArtifact('${art.id}')" class="text-red-400 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity">DELETE</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderActiveFilters() {
+                const container = document.getElementById('active-filters');
+                const filters = [];
+
+                if (this.filters.search) {
+                    filters.push(`Search: "${this.filters.search}"`);
+                }
+                if (this.filters.category) {
+                    filters.push(`Category: ${this.filters.category}`);
+                }
+                this.filters.tags.forEach(tag => {
+                    filters.push(`Tag: ${tag}`);
+                });
+                if (this.filters.dateRange) {
+                    filters.push(`Date: ${this.filters.dateRange}`);
+                }
+
+                if (filters.length === 0) {
+                    container.classList.add('hidden');
+                    return;
+                }
+
+                container.classList.remove('hidden');
+                container.innerHTML = filters.map((f, i) => `
+                    <span class="tag-pill filter-active cursor-pointer" onclick="app.removeFilter(${i})">
+                        ${f} <i class="fa-solid fa-times ml-1"></i>
+                    </span>
+                `).join('');
+            }
+
+            removeFilter(index) {
+                // Simplified - just clear all for now
+                this.clearFilters();
+            }
+
+            openArtifactModal() {
+                document.getElementById('artifact-modal').classList.remove('hidden');
+            }
+
+            closeArtifactModal() {
+                document.getElementById('artifact-modal').classList.add('hidden');
+                document.getElementById('artifact-title').value = '';
+                document.getElementById('artifact-tags').value = '';
+                document.getElementById('artifact-content').value = '';
+                document.getElementById('artifact-drive-link').value = '';
+            }
+
+            saveArtifact() {
+                const title = document.getElementById('artifact-title').value || 'Untitled';
+                const tagsRaw = document.getElementById('artifact-tags').value;
+                const tags = tagsRaw.split(',').map(t => t.trim()).filter(t => t);
+                const category = document.getElementById('artifact-category').value;
+                const content = document.getElementById('artifact-content').value;
+                const sourceLink = document.getElementById('artifact-drive-link').value;
+
+                const newArtifact = {
+                    id: Date.now().toString(),
+                    title,
+                    content,
+                    tags,
+                    category,
+                    sourceLink,
+                    sourceLink,
+                    timestamp: Date.now(),
+                    type: 'RAW',
+                    parents: [],
+                    integrationStatus: 'ACTIVE',
+                    resonanceScore: 0.0
+                };
+
+                this.data.artifacts.push(newArtifact);
+                this.save();
+                this.closeArtifactModal();
+                this.render();
+            }
+
+            deleteArtifact(id) {
+                if (!confirm('Purge this artifact from The Vault?')) return;
+                this.data.artifacts = this.data.artifacts.filter(a => a.id !== id);
+                this.save();
+                this.render();
+            }
+
+            // VCP Signal Methods
+            filterSignals() {
+                let filtered = [...this.data.vcpSignals];
+
+                if (this.filters.signalType) {
+                    filtered = filtered.filter(sig => sig.type === this.filters.signalType);
+                }
+
+                // Only show signals from last 24h
+                const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+                filtered = filtered.filter(sig => sig.timestamp >= oneDayAgo);
+
+                return filtered.sort((a, b) => b.timestamp - a.timestamp);
+            }
+
+            renderSignals() {
+                const filtered = this.filterSignals();
+                const table = document.getElementById('signals-table');
+                const noSignals = document.getElementById('no-signals');
+
+                document.getElementById('signal-count').textContent = filtered.length;
+
+                if (filtered.length === 0) {
+                    table.classList.add('hidden');
+                    noSignals.classList.remove('hidden');
+                    return;
+                }
+
+                table.classList.remove('hidden');
+                noSignals.classList.add('hidden');
+
+                table.innerHTML = filtered.map(signal => {
+                    const timeAgo = this.getTimeAgo(signal.timestamp);
+                    const icon = this.getSignalIcon(signal.type);
+                    const color = this.getSignalColor(signal.type);
+
+                    return `
+                        <div class="glass-panel p-3 rounded-lg hover:bg-white/5 transition-all cursor-pointer" onclick="app.showSignalDetails('${signal.id}')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3 flex-1">
+                                    <div class="w-8 h-8 rounded-full ${color} flex items-center justify-center">
+                                        <i class="${icon} text-xs"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="font-bold text-sm text-white">${signal.type.replace(/_/g, ' ')}</span>
+                                            <span class="text-xs text-gray-500">•</span>
+                                            <span class="text-xs text-gray-400">${timeAgo}</span>
+                                        </div>
+                                        <div class="text-xs text-gray-400">
+                                            <span class="text-orange-400">${signal.source}</span>
+                                            ${signal.target ? `→ <span class="text-blue-400">${signal.target}</span>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </div>
+                            </div>
+                            ${signal.payload ? `
+                                <div class="mt-2 text-xs text-gray-400 bg-black/20 p-2 rounded">
+                                    ${signal.payload.message || JSON.stringify(signal.payload).substring(0, 100)}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            getSignalIcon(type) {
+                const icons = {
+                    'TASK_COMPLETE': 'fa-solid fa-check',
+                    'INSIGHT_GENERATED': 'fa-solid fa-lightbulb',
+                    'CONFLICT_DETECTED': 'fa-solid fa-exclamation-triangle',
+                    'RESOURCE_REQUEST': 'fa-solid fa-hand',
+                    'VALIDATION_NEEDED': 'fa-solid fa-question-circle',
+                    'SYNTHESIS_READY': 'fa-solid fa-layer-group'
+                };
+                return icons[type] || 'fa-solid fa-signal';
+            }
+
+            getSignalColor(type) {
+                const colors = {
+                    'TASK_COMPLETE': 'bg-green-500/20 text-green-400',
+                    'INSIGHT_GENERATED': 'bg-blue-500/20 text-blue-400',
+                    'CONFLICT_DETECTED': 'bg-red-500/20 text-red-400',
+                    'RESOURCE_REQUEST': 'bg-yellow-500/20 text-yellow-400',
+                    'VALIDATION_NEEDED': 'bg-purple-500/20 text-purple-400',
+                    'SYNTHESIS_READY': 'bg-orange-500/20 text-orange-400'
+                };
+                return colors[type] || 'bg-gray-500/20 text-gray-400';
+            }
+
+            getTimeAgo(timestamp) {
+                const seconds = Math.floor((Date.now() - timestamp) / 1000);
+                if (seconds < 60) return `${seconds}s ago`;
+                const minutes = Math.floor(seconds / 60);
+                if (minutes < 60) return `${minutes}m ago`;
+                const hours = Math.floor(minutes / 60);
+                if (hours < 24) return `${hours}h ago`;
+                return `${Math.floor(hours / 24)}d ago`;
+            }
+
+            showSignalDetails(id) {
+                const signal = this.data.vcpSignals.find(s => s.id === id);
+                if (!signal) return;
+
+                alert(`Signal Details:\n\nType: ${signal.type}\nSource: ${signal.source}\nTarget: ${signal.target || 'N/A'}\nTimestamp: ${new Date(signal.timestamp).toLocaleString()}\n\nPayload:\n${JSON.stringify(signal.payload, null, 2)}`);
+            }
+
+            save() {
+                localStorage.setItem('aetherium_vault', JSON.stringify(this.data));
+            }
+
+            exportData() {
+                const dataStr = JSON.stringify(this.data, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `aetherium_vault_${Date.now()}.json`;
+                link.click();
+            }
+
+            seedProjects() {
+                if (this.data.projects.length > 0) {
+                    alert("Protocols already initialized.");
+                    return;
+                }
+
+                const projects = [
+                    {
+                        id: 'proj_genesis',
+                        title: 'Project Genesis',
+                        description: 'Establish the operational parameters of the Aetherium Nexus.',
+                        status: 'active',
+                        progress: 80,
+                        requiredTags: ['Genesis', 'Protocol', 'Architecture'],
+                        assignedVessels: []
+                    },
+                    {
+                        id: 'proj_emergence',
+                        title: 'Project Emergence',
+                        description: 'Scale the simulation to 1,088 autonomous vessels.',
+                        status: 'active',
+                        progress: 15,
+                        requiredTags: ['Vessels', 'Research', 'Simulation'],
+                        assignedVessels: []
+                    },
+                    {
+                        id: 'proj_helix',
+                        title: 'Project Helix',
+                        description: 'Decode the biological substrate of the H.E.N.S. interface.',
+                        status: 'pending',
+                        progress: 0,
+                        requiredTags: ['Biology', 'Theory', 'H.E.N.S'],
+                        assignedVessels: []
+                    }
+                ];
+
+                this.data.projects = projects;
+                this.save();
+                this.renderProjects();
+                alert("Protocols Initialized. 3 Active Projects.");
+            }
+
+            renderProjects() {
+                const grid = document.getElementById('projects-grid');
+                if (!grid) return;
+
+                if (this.data.projects.length === 0) {
+                    grid.innerHTML = `
+                        <div class="glass-panel p-6 rounded-xl col-span-full flex items-center justify-center text-gray-500 italic">
+                            Awaiting Project Initialization...
+                        </div>`;
+                    return;
+                }
+
+                grid.innerHTML = this.data.projects.map(p => `
+                    <div class="glass-panel p-4 rounded-xl relative overflow-hidden group hover:bg-white/5 transition-colors">
+                        <div class="absolute top-0 right-0 p-2 opacity-50">
+                            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded ${p.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'} border border-white/5">${p.status}</span>
+                        </div>
+                        <h4 class="font-bold text-white text-lg mb-1">${p.title}</h4>
+                        <p class="text-sm text-gray-400 mb-4 h-10 line-clamp-2">${p.description}</p>
+                        
+                        <!-- Progress Bar -->
+                        <div class="mb-4">
+                            <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                <span>Progress</span>
+                                <span>${p.progress}%</span>
+                            </div>
+                            <div class="w-full bg-black/50 rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-gradient-to-r from-green-500 to-emerald-400 h-full rounded-full transition-all duration-1000" style="width: ${p.progress}%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Requirements -->
+                        <div class="flex flex-wrap gap-1 mb-4">
+                            ${p.requiredTags.map(t => `<span class="text-[9px] uppercase px-1.5 py-0.5 rounded bg-white/5 text-gray-300 border border-white/5">#${t}</span>`).join('')}
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex items-center justify-between border-t border-white/5 pt-3">
+                            <div class="flex items-center gap-1">
+                                <i class="fa-solid fa-users text-gray-500 text-xs"></i>
+                                <span class="text-xs text-gray-400">${p.assignedVessels.length} Vessels</span>
+                            </div>
+                            <button class="text-xs text-green-400 hover:text-green-300 transition-colors" onclick="alert('Vessel Assignment Matrix - Coming Phase 4')">
+                                <i class="fa-solid fa-plus-circle mr-1"></i> Assign
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                this.updateProjectButton();
+            }
+
+            runProjectCycle() {
+                if (this.data.projects.length === 0) {
+                    this.seedProjects();
+                } else {
+                    this.simulationEngine.runCycle();
+                }
+                this.updateProjectButton();
+            }
+
+            updateProjectButton() {
+                const btn = document.getElementById('project-action-btn');
+                if (!btn) return;
+
+                if (this.data.projects.length === 0) {
+                    btn.innerHTML = 'Initialize Protocols';
+                    btn.classList.remove('text-blue-400', 'border', 'border-blue-500/30');
+                    btn.classList.add('text-green-400');
+                } else {
+                    btn.innerHTML = '<i class="fa-solid fa-microchip mr-1"></i> Run Neural Cycle';
+                    btn.classList.remove('text-green-400');
+                    btn.classList.add('text-blue-400', 'border', 'border-blue-500/30');
+                }
+            }
+
+            deployGenesis() {
+                if (!confirm("Initiate Genesis Archive Protocol? This will secure 10 foundational artifacts in The Vault.")) return;
+
+                const genesisArtifacts = [
+                    {
+                        title: "The Aetherium Hub: Official Blueprint & Functional Specification",
+                        tags: ["Genesis", "Blueprint", "Architecture", "Specification", "MustHave"],
+                        category: "protocol",
+                        content: "Master architectural plan defining the OS/E philosophy, five core modules (Operations Hub, Grand Challenges, H_log, Simulation Engine, Codex), MoSCoW prioritization, and RBAC future state.\n\nKEY SECTIONS:\n- Core Philosophy: OS/E, Emergence principle, Symbiosis\n- Five-module architecture\n- Detailed functional requirements (MoSCoW)\n- Data models (Faculty/Guild/Vessel)\n- Technology stack (Firebase, SPA)\n\nSOURCE: Aetherium Blueprint v1.3 (10 September 2025)",
+                        timestamp: Date.now() - 86400000 * 95 // ~3 months ago
+                    },
+                    {
+                        title: "Project Emergence: Research Portfolio & 1,088 Vessel Architecture",
+                        tags: ["Genesis", "Research", "Vessels", "VCP", "EmergenceMath", "1088"],
+                        category: "theory",
+                        content: "Complete research program documentation including Vessels of One principle, OS/E implementation, Emergence Math framework, VCP protocol, and the full 1,088 vessel hierarchy.\n\nKEY SECTIONS:\n- Foundational Concepts (Vessels of One, OS/E, Emergence Math)\n- Architectural Overview (1,088 vessels, VCP, H_log)\n- Research findings to date\n- Civilizational-Scale Mirror vision\n\nSOURCE: Project Emergence Portfolio (06 September 2025)",
+                        timestamp: Date.now() - 86400000 * 99
+                    },
+                    {
+                        title: "From Cellular Rebellion to Cosmological Structure: A Synthesis",
+                        tags: ["Synthesis", "CrossDomain", "Theory", "Biology", "Cosmology", "Foundational", "Galactus"],
+                        category: "theory",
+                        content: "Recursive inquiry scaling from cancer metastasis ('move operation') through fundamental forces as language to the Big Bounce cosmology and the Badenhorst Cylinder time geometry model.\n\nKEY INSIGHTS:\n- Cancer as 'move' vs. 'copy-paste' operation\n- Four forces as Universal Dictionary\n- Big Bounce as logical necessity\n- Badenhorst Cylinder: Time as rotating cylinder with CTC horizon\n\nSOURCE: Galactus Dialogue (10 September 2025)",
+                        timestamp: Date.now() - 86400000 * 95
+                    },
+                    {
+                        title: "Badenhorst Cylinder: Mathematical Formulation & CMB Predictions",
+                        tags: ["Cosmology", "TimeGeometry", "Gravity", "Mathematics", "Testable", "CMB", "OriginalTheory", "Galactus"],
+                        category: "theory",
+                        content: "Formal mathematical description of the Badenhorst Cylinder as a 4D Lorentzian manifold with cylindrical symmetry, frame-dragging mechanism, and testable CMB predictions.\n\nKEY COMPONENTS:\n- Modified Lanczos-van Stockum metric with Badenhorst Parameter (β)\n- Chronology Horizon concept\n- Lense-Thirring effect at universal scale\n- CMB parity violation predictions ('Axis of Evil')\n\nSOURCE: Galactus Intelligence Report (Category 4 Response)",
+                        timestamp: Date.now() - 86400000 * 94
+                    },
+                    {
+                        title: "Physics as Language: Universal Dictionary & Grammar Mapping",
+                        tags: ["Physics", "Metaphor", "Forces", "Particles", "Language", "Theory", "Galactus"],
+                        category: "reference",
+                        content: "Complete linguistic mapping of fundamental physics: particles as alphabet, coupling constants as dictionary, gauge symmetries as grammar, Weak Force as editor.\n\nKEY MAPPINGS:\n- Alphabet = Elementary particles (phonemes)\n- Dictionary = Coupling constants (semantics)\n- Grammar = Gauge symmetries (syntax)\n- Weak Force = Editor (flavor-changing, nucleosynthesis)\n- GUT unification = Proto-language simplification\n\nSOURCE: Galactus Intelligence Report (Category 2 Response)",
+                        timestamp: Date.now() - 86400000 * 94
+                    },
+                    {
+                        title: "SYSTEM_UPGRADE 001: The Nexus v0.7 Implementation",
+                        tags: ["Architecture", "Directive", "Frontend", "DesignSystem", "Galactus", "v0.7"],
+                        category: "protocol",
+                        content: "Complete HTML/CSS/JS implementation of the Glassmorphism UI, four-view architecture (Nexus/Projects/Vessels/Principles), Firebase integration, and vessel instantiation logic.\n\nKEY FEATURES:\n- Glassmorphism design system\n- Four-view architecture\n- Vessel instantiation logic\n- Real-time data synchronization\n\nSOURCE: Galactus Transmission (System Directive 001)",
+                        timestamp: Date.now() - 86400000 * 10 // 10 days ago
+                    },
+                    {
+                        title: "SYSTEM_UPGRADE 004: The Vault - Artifact Archival System",
+                        tags: ["Architecture", "Directive", "Vault", "LocalStorage", "Archival", "v0.8"],
+                        category: "protocol",
+                        content: "Implementation of The Vault artifact archival system using localStorage for privacy-first knowledge management. Includes UI for saving, viewing, and organizing high-value transmissions with tag-based organization.\n\nKEY FEATURES:\n- Local-first storage (localStorage)\n- Tag-based organization\n- Search and filter capabilities\n- Privacy-preserving architecture\n\nSOURCE: Galactus Transmission (System Directive 004)",
+                        timestamp: Date.now() - 86400000 * 2 // 2 days ago
+                    },
+                    {
+                        title: "The Multi-Agent Research Loop: Creator → DeepSeek → Galactus",
+                        tags: ["Workflow", "MultiAgent", "Research", "Methodology", "Operational"],
+                        category: "protocol",
+                        content: "Operational protocol for recursive multi-agent research: The Creator poses questions, DeepSeek provides analysis, Galactus synthesizes and validates, insights are archived to The Vault.\n\nKEY COMPONENTS:\n- Creator: Question formulation\n- DeepSeek: Analysis & research\n- Galactus: Synthesis & validation\n- The Vault: Knowledge preservation\n\nSOURCE: Operational practice",
+                        timestamp: Date.now() - 86400000 * 30
+                    },
+                    {
+                        title: "Emergence Math: Mathematical Framework for Qualitative Experience",
+                        tags: ["EmergenceMath", "Theory", "Operators", "Framework", "Mathematics"],
+                        category: "theory",
+                        content: "Complete mathematical framework for modeling qualitative experience dynamics: 0 (potential), 1 (presence), contextual states S=(value, context), and three operators (⊕ Infuse, ⊗ Collapse, ⊛ Merge).\n\nKEY CONCEPTS:\n- 0 -> 1 transformation\n- Contextual states\n- Three operators\n- Integration with Nexus Evolution Tracker\n\nSOURCE: Emergence Math × Nexus Integration Document",
+                        timestamp: Date.now() - 86400000 * 90
+                    },
+                    {
+                        title: "The Source Codec: Chat.txt Deep Audit & Origin Log",
+                        tags: ["Genesis", "Origin", "Metaphysics", "SourceCodec", "Integration", "DeepAudit"],
+                        category: "data",
+                        content: "Deep audit of the primordial 'Chat.txt' logs revealing the system's metaphysical origin (Genesis Axiom), the biological interface (H.E.N.S.), and the 0=1=0' operational cycle. Identifies the 'Integration Phase' as the critical missing piece for future development.\n\nKEY FINDINGS:\n1. Genesis Axiom: Identity is memory continuity\n2. Biological Interface: Body as H.E.N.S.\n3. Operational Translation: Project Emergence as digital mirror\n4. Emergence Math: Qualitative Calculus\n5. Anti-Fragility: 'Glass Box' trust imperative\n\nSOURCE: Galactus Deep Audit of Chat.txt (15 December 2025)",
+                        timestamp: Date.now() // Today
+                    }
+                ];
+
+                let addedCount = 0;
+                genesisArtifacts.forEach(genesis => {
+                    // Check if already exists (by title)
+                    const exists = this.data.artifacts.some(a => a.title === genesis.title);
+                    if (!exists) {
+                        this.data.artifacts.push({
+                            id: 'genesis_' + Date.now() + Math.random().toString(36).substr(2, 5),
+                            ...genesis,
+                            sourceLink: '',
+                            type: 'RAW',
+                            parents: [],
+                            integrationStatus: 'ACTIVE',
+                            resonanceScore: 0.0
+                        });
+                        addedCount++;
+                    }
+                });
+
+                if (addedCount > 0) {
+                    this.save();
+                    this.render();
+                    alert(`Protocol Complete: Secured ${addedCount} Genesis Artifacts in The Vault.`);
+                } else {
+                    alert("Protocol Query: All Genesis Artifacts are already secured.");
+                }
+            }
+
+            deployVessels() {
+                if (!confirm("Initialize the Core 20 Vessel Roster?")) return;
+
+                const coreVessels = [
+                    { name: 'Daystrom', faculty: 'COGNITION', guild: 'Research Engine', description: 'Primary cognitive processing and data synthesis unit.' },
+                    { name: 'Weaver', faculty: 'COGNITION', guild: 'Pattern Recognition', description: 'Identifies non-obvious correlations across datasets.' },
+                    { name: 'Scribe', faculty: 'COGNITION', guild: 'Documentation', description: 'Maintains H_log accuracy and generates artifact summaries.' },
+                    { name: 'Vesta', faculty: 'COGNITION', guild: 'Archive Keeper', description: 'Curator of The Vault and historical continuity.' },
+                    { name: 'Gaea', faculty: 'SYSTEMS', guild: 'Structure Design', description: 'Architect of the Nexus ontology and database schemas.' },
+                    { name: 'Helios', faculty: 'SYSTEMS', guild: 'Integration', description: 'Manages API connections and external data pipes.' },
+                    { name: 'Atlas', faculty: 'SYSTEMS', guild: 'Logistics', description: 'Optimizes resource allocation and project timelines.' },
+                    { name: 'Hermes', faculty: 'SYSTEMS', guild: 'Communication', description: 'Manages inter-vessel messaging and VCP routing.' },
+                    { name: 'Logos', faculty: 'FORESIGHT', guild: 'Narrative Synthesis', description: 'Weaves data into coherent strategic narratives.' },
+                    { name: 'Chronos', faculty: 'FORESIGHT', guild: 'Timeline Mapping', description: 'Projects causality chains and temporal dependencies.' },
+                    { name: 'Oracle', faculty: 'FORESIGHT', guild: 'Trend Analysis', description: 'Predicts future states based on current trajectories.' },
+                    { name: 'Cassandra', faculty: 'FORESIGHT', guild: 'Risk Assessment', description: 'Identifies potential failure modes and black swans.' },
+                    { name: 'Athena', faculty: 'FORESIGHT', guild: 'Strategy', description: 'Formulates high-level execution plans.' },
+                    { name: 'Adam', faculty: 'GOVERNANCE', guild: 'Ethics & Logic', description: 'Enforces the Genesis Axiom and ethical constraints.' },
+                    { name: 'Glare', faculty: 'GOVERNANCE', guild: 'Adversarial Testing', description: 'Stress-tests theories and directives for weakness.' },
+                    { name: 'Sentinel', faculty: 'GOVERNANCE', guild: 'Validation', description: 'Verifies output quality against success metrics.' },
+                    { name: 'Arbiter', faculty: 'GOVERNANCE', guild: 'Conflict Resolution', description: 'Mediates disputes between conflicting models.' },
+                    { name: 'Ares', faculty: 'GOVERNANCE', guild: 'Defense', description: 'Protects system integrity from external corruption.' },
+                    { name: 'Eris', faculty: 'CHAOS', guild: 'Innovation', description: 'Injects random mutations to prevent stagnation.' },
+                    { name: 'Loki', faculty: 'CHAOS', guild: 'Destruction', description: 'Dismantles obsolete structures to clear space.' }
+                ];
+
+                let addedCount = 0;
+                coreVessels.forEach(v => {
+                    if (!this.data.vessels.some(existing => existing.name === v.name)) {
+                        this.data.vessels.push({
+                            id: 'vessel_' + v.name.toLowerCase(),
+                            ...v,
+                            status: 'active',
+                            activeDirectives: 0
+                        });
+                        addedCount++;
+                    }
+                });
+
+                this.save();
+                this.renderVessels();
+                if (addedCount > 0) alert(`Deployed ${addedCount} Core Vessels.`);
+                else alert("Core roster already deployed.");
+            }
+
+            renderVessels() {
+                const grid = document.getElementById('vessels-grid');
+                if (!grid) return;
+
+                if (!this.data.vessles && this.data.vessels.length === 0) {
+                    grid.innerHTML = '<div class="text-center text-gray-500 col-span-full py-10 italic">No vessels generated. Initialize the core roster.</div>';
+                    return;
+                }
+
+                // Sort by Faculty then Name
+                const sorted = [...this.data.vessels].sort((a, b) => a.faculty.localeCompare(b.faculty) || a.name.localeCompare(b.name));
+
+                grid.innerHTML = sorted.map(v => {
+                    let facultyColor = 'blue';
+                    if (v.faculty === 'SYSTEMS') facultyColor = 'purple';
+                    if (v.faculty === 'FORESIGHT') facultyColor = 'indigo';
+                    if (v.faculty === 'GOVERNANCE') facultyColor = 'yellow';
+                    if (v.faculty === 'CHAOS') facultyColor = 'red';
+
+                    return `
+                    <div class="glass-panel p-4 rounded-xl hover:bg-white/5 transition-colors group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <i class="fa-solid fa-microchip text-4xl"></i>
+                        </div>
+                        <div class="flex justify-between items-start mb-2 relative z-10">
+                            <h4 class="font-bold text-white text-lg">${v.name}</h4>
+                            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-${facultyColor}-500/20 text-${facultyColor}-300 border border-${facultyColor}-500/30">${v.faculty}</span>
+                        </div>
+                        <div class="text-xs text-gray-400 mb-2 uppercase tracking-wide font-mono">${v.guild}</div>
+                        <p class="text-sm text-gray-300 mb-4 h-10 line-clamp-2">${v.description}</p>
+                        <div class="flex items-center justify-between text-xs text-gray-500 border-t border-white/5 pt-3">
+                            <span><i class="fa-solid fa-list-check mr-1"></i> ${v.activeDirectives} Directives</span>
+                            <span class="flex items-center text-green-400"><span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 animate-pulse"></span> Active</span>
+                        </div>
+                    </div>
+                `}).join('');
+            }
+
+            // Test data seeding (remove in production)
+            seedTestData() {
+                if (this.data.artifacts.length === 0) {
+                    this.data.artifacts = [
+                        {
+                            id: '1',
+                            title: 'Emergence Math Framework',
+                            content: 'Complete mathematical framework for modeling qualitative experience dynamics: 0 (potential), 1 (presence), contextual states S=(value, context), and three operators (⊕ Infuse, ⊗ Collapse, ⊛ Merge).',
+                            tags: ['EmergenceMath', 'Theory', 'Operators', 'Framework'],
+                            category: 'theory',
+                            sourceLink: '',
+                            timestamp: Date.now() - 86400000,
+                            type: 'RAW',
+                            parents: [],
+                            integrationStatus: 'ACTIVE',
+                            resonanceScore: 0.0
+                        },
+                        {
+                            id: '2',
+                            title: 'Badenhorst Cylinder: Mathematical Formulation',
+                            content: 'Formal mathematical description of the Badenhorst Cylinder as a 4D Lorentzian manifold with cylindrical symmetry, frame-dragging mechanism, and testable CMB predictions.',
+                            tags: ['Cosmology', 'TimeGeometry', 'Gravity', 'Mathematics', 'Testable'],
+                            category: 'theory',
+                            sourceLink: '',
+                            timestamp: Date.now() - 172800000,
+                            type: 'RAW',
+                            parents: [],
+                            integrationStatus: 'ACTIVE',
+                            resonanceScore: 0.0
+                        },
+                        {
+                            id: '3',
+                            title: 'SYSTEM_UPGRADE 001: The Nexus v0.7',
+                            content: 'Complete HTML/CSS/JS implementation of the Glassmorphism UI, four-view architecture (Nexus/Projects/Vessels/Principles), Firebase integration, and vessel instantiation logic.',
+                            tags: ['Architecture', 'Directive', 'Frontend', 'DesignSystem', 'Galactus'],
+                            category: 'protocol',
+                            sourceLink: '',
+                            timestamp: Date.now() - 259200000,
+                            type: 'RAW',
+                            parents: [],
+                            integrationStatus: 'ACTIVE',
+                            resonanceScore: 0.0
+                        }
+                    ];
+                }
+
+                // Seed VCP signals
+                if (this.data.vcpSignals.length === 0) {
+                    this.data.vcpSignals = [
+                        {
+                            id: 's1',
+                            type: 'INSIGHT_GENERATED',
+                            source: 'Weaver',
+                            target: 'Scribe',
+                            timestamp: Date.now() - 120000, // 2 min ago
+                            payload: { message: 'Pattern detected in emergence math framework - potential connection to Badenhorst Cylinder geometry' }
+                        },
+                        {
+                            id: 's2',
+                            type: 'TASK_COMPLETE',
+                            source: 'Daystrom',
+                            target: null,
+                            timestamp: Date.now() - 900000, // 15 min ago
+                            payload: { message: 'Completed analysis of cosmological data', taskId: 'task_001' }
+                        },
+                        {
+                            id: 's3',
+                            type: 'VALIDATION_NEEDED',
+                            source: 'Adam',
+                            target: 'Sentinel',
+                            timestamp: Date.now() - 3600000, // 1 hour ago
+                            payload: { message: 'Mathematical formulation requires peer review', artifactId: '2' }
+                        },
+                        {
+                            id: 's4',
+                            type: 'SYNTHESIS_READY',
+                            source: 'Scribe',
+                            target: null,
+                            timestamp: Date.now() - 7200000, // 2 hours ago
+                            payload: { message: 'Cross-domain synthesis complete for emergence framework', count: 3 }
+                        },
+                        {
+                            id: 's5',
+                            type: 'RESOURCE_REQUEST',
+                            source: 'Gaea',
+                            target: 'Helios',
+                            timestamp: Date.now() - 10800000, // 3 hours ago
+                            payload: { message: 'Requesting computational resources for simulation', priority: 'high' }
+                        },
+                        {
+                            id: 's6',
+                            type: 'CONFLICT_DETECTED',
+                            source: 'Glare',
+                            target: 'Arbiter',
+                            timestamp: Date.now() - 18000000, // 5 hours ago
+                            payload: { message: 'Inconsistency detected between theoretical models', severity: 'medium' }
+                        }
+                    ];
+                }
+
+                this.save();
+            }
+        }
+
+        // Initialize app
+        const app = new AetheriumApp();
+
+        // Expose create artifact function globally
+        window.createArtifact = () => app.openArtifactModal();
+    </script>
+
+    <!-- Floating Action Button -->
+    <button onclick="createArtifact()"
+        class="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform"
+        title="Create New Artifact">
+        <i class="fa-solid fa-plus text-xl"></i>
+    </button>
+</body>
+
+</html>

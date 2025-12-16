@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus v1.0 - Idea Evolution Tracker</title>
+    <meta name="description" content="Dynamic system for managing intellectual evolution through self-correction and iterative refinement">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0f14;
+            --bg-secondary: #1a2a3a;
+            --bg-tertiary: #2d3748;
+            --accent-blue: #4299e1;
+            --accent-purple: #4c51bf;
+            --accent-red: #f56565;
+            --accent-orange: #f6ad55;
+            --accent-green: #48bb78;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --glass-bg: rgba(26, 42, 58, 0.7);
+            --glass-border: rgba(66, 153, 225, 0.3);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 40px 20px;
+            line-height: 1.6;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(66, 153, 225, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(76, 81, 191, 0.1) 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        .dashboard {
+            display: grid;
+            gap: 30px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .idea-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .idea-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .idea-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 20px 60px rgba(66, 153, 225, 0.2);
+        }
+
+        .idea-card:hover::before {
+            opacity: 1;
+        }
+
+        .idea-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .idea-title {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .idea-title h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .idea-type {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .status-badge {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        .status-under-review {
+            background: rgba(246, 173, 85, 0.2);
+            color: var(--accent-orange);
+            border: 1px solid var(--accent-orange);
+        }
+
+        .status-revised {
+            background: rgba(72, 187, 120, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .timeline {
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .timeline-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--accent-blue);
+        }
+
+        .timeline-container {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 20px 0;
+            position: relative;
+        }
+
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            z-index: 0;
+        }
+
+        .timeline-item {
+            min-width: 200px;
+            padding: 20px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .timeline-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .timeline-item.version {
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .timeline-item.review {
+            border-left: 4px solid var(--accent-red);
+        }
+
+        .timeline-date {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .timeline-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .timeline-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .review-section {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 4px solid var(--accent-red);
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .review-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent-red), var(--accent-orange));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .review-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .review-meta {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .review-findings, .review-recommendations {
+            margin: 20px 0;
+        }
+
+        .review-findings h4, .review-recommendations h4 {
+            color: var(--accent-orange);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .review-findings ul, .review-recommendations ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .review-findings li, .review-recommendations li {
+            padding: 8px 0 8px 25px;
+            position: relative;
+        }
+
+        .review-findings li::before {
+            content: '⚠';
+            position: absolute;
+            left: 0;
+            color: var(--accent-red);
+        }
+
+        .review-recommendations li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+        }
+
+        .output-tracks {
+            margin-top: 40px;
+        }
+
+        .output-tracks-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--accent-purple);
+        }
+
+        .track-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .track-btn {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            border: none;
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .track-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .track-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .track-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(76, 81, 191, 0.4);
+        }
+
+        .track-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .output-display {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            border: 1px solid var(--accent-blue);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .output-display h3 {
+            color: var(--accent-blue);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .output-display pre {
+            background: var(--bg-primary);
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .citation-panel {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .citation-panel h3 {
+            color: var(--accent-green);
+            margin-bottom: 15px;
+        }
+
+        .citation-link {
+            display: block;
+            padding: 10px 15px;
+            margin: 8px 0;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            color: var(--accent-blue);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .citation-link:hover {
+            background: var(--accent-blue);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .idea-card {
+                padding: 25px;
+            }
+
+            .timeline-container {
+                flex-direction: column;
+            }
+
+            .timeline-item {
+                min-width: 100%;
+            }
+
+            .track-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ Nexus v1.0</h1>
+            <p class="subtitle">Idea Evolution Tracker - Managing Intellectual Evolution Through Self-Correction</p>
+        </header>
+
+        <div class="dashboard">
+            <div class="idea-card" id="badenhorst-cylinder">
+                <div class="idea-header">
+                    <div class="idea-title">
+                        <h2>Badenhorst Cylinder Time Model</h2>
+                        <p class="idea-type">Speculative Hypothesis / Philosophical Concept</p>
+                    </div>
+                    <div class="status-badge status-under-review">Under Revision</div>
+                </div>
+
+                <div class="timeline">
+                    <h3 class="timeline-title">Evolution Timeline</h3>
+                    <div class="timeline-container">
+                        <div class="timeline-item version" onclick="showVersion('v1')">
+                            <div class="timeline-date">September 10, 2025</div>
+                            <div class="timeline-label">v1.0</div>
+                            <div class="timeline-description">Original formulation</div>
+                        </div>
+                        <div class="timeline-item review" onclick="showReview()">
+                            <div class="timeline-date">October 25, 2025</div>
+                            <div class="timeline-label">Galactus Review</div>
+                            <div class="timeline-description">Internal peer review</div>
+                        </div>
+                        <div class="timeline-item version" onclick="showVersion('v1_1')">
+                            <div class="timeline-date">October 26, 2025</div>
+                            <div class="timeline-label">v1.1</div>
+                            <div class="timeline-description">Revised with citations</div>
+                        </div>
+                        <div class="timeline-item version" onclick="showVersion('v2')">
+                            <div class="timeline-date">November 1, 2025</div>
+                            <div class="timeline-label">v2.0</div>
+                            <div class="timeline-description">Philosophical reframe</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="review-section" id="review-panel">
+                    <div class="review-header">
+                        <div class="review-icon">🔍</div>
+                        <div>
+                            <div class="review-title">Galactus Internal Review</div>
+                            <div class="review-meta">October 25, 2025 • Priority: High</div>
+                        </div>
+                    </div>
+                    
+                    <div class="review-findings">
+                        <h4>Findings</h4>
+                        <ul>
+                            <li>Missing academic citations for Big Bounce cosmology claims</li>
+                            <li>Time arrow contradiction not adequately addressed</li>
+                            <li>Unclear distinction between scientific hypothesis and philosophical speculation</li>
+                            <li>Need to acknowledge Phillip Badenhorst's original student work at University of Pretoria</li>
+                        </ul>
+                    </div>
+
+                    <div class="review-recommendations">
+                        <h4>Recommendations</h4>
+                        <ul>
+                            <li>Add proper citations to Big Bounce literature (Steinhardt & Turok)</li>
+                            <li>Reference General Relativity CTC (Closed Timelike Curves) research</li>
+                            <li>Explicitly frame as metaphorical/philosophical exploration</li>
+                            <li>Create separate tracks for scientific vs. philosophical presentation</li>
+                            <li>Develop educational simulation to visualize the concept</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="citation-panel">
+                    <h3>📚 Academic Grounding & Citations</h3>
+                    <a href="#" class="citation-link">🎓 University of Pretoria - Phillip Badenhorst Student Work</a>
+                    <a href="#" class="citation-link">📖 Big Bounce Cosmology - Steinhardt & Turok</a>
+                    <a href="#" class="citation-link">🔬 Closed Timelike Curves in General Relativity</a>
+                    <a href="#" class="citation-link">⏰ Cylindrical Time Topology - Philosophical Literature</a>
+                </div>
+
+                <div class="output-tracks">
+                    <h3 class="output-tracks-title">Multi-Track Output Generation</h3>
+                    <div class="track-buttons">
+                        <button class="track-btn" onclick="generateOutput('scientific')">
+                            📄 Scientific Paper
+                        </button>
+                        <button class="track-btn" onclick="generateOutput('philosophical')">
+                            💭 Philosophical Essay
+                        </button>
+                        <button class="track-btn" onclick="generateOutput('comic')">
+                            🎨 Comic Narrative
+                        </button>
+                        <button class="track-btn" onclick="generateOutput('simulation')">
+                            🌐 Interactive Simulation
+                        </button>
+                    </div>
+                    
+                    <div id="output" class="hidden"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ideaData = {
+            title: "Badenhorst Cylinder Time Model",
+            versions: {
+                v1: {
+                    title: "v1.0 - Original Formulation",
+                    date: "September 10, 2025",
+                    content: `ORIGINAL SPECULATIVE MODEL
+
+This model proposes that time might be better understood as having a cylindrical topology rather than a linear one. In this framework:
+
+• Time flows circumferentially around the cylinder
+• The cylinder's axis represents a different temporal dimension
+• Closed timelike curves (CTCs) emerge naturally from the topology
+• The Big Bounce cosmology could be reinterpreted through this lens
+
+Key Claims:
+- Time is not fundamentally linear
+- Cyclical and linear aspects coexist in cylindrical geometry
+- Frame-dragging effects in General Relativity might support this model
+
+Status: Initial speculation, requires academic grounding`
+                },
+                v1_1: {
+                    title: "v1.1 - Revised with Citations",
+                    date: "October 26, 2025",
+                    content: `REVISED MODEL WITH ACADEMIC REFERENCES
+
+Following internal review, this version adds proper academic grounding:
+
+THEORETICAL FOUNDATIONS:
+• Big Bounce Cosmology (Steinhardt & Turok, 2002) - cyclic universe models
+• Closed Timelike Curves in GR (Gödel, 1949; Thorne, 1988)
+• Cylindrical spacetime topologies in theoretical physics
+
+ACKNOWLEDGMENTS:
+This concept builds on exploratory work by Phillip Badenhorst (University of Pretoria student research on alternative time models).
+
+CLARIFICATIONS:
+- This is a speculative theoretical framework
+- Not claiming empirical validation
+- Intended as a thought experiment for exploring time's nature
+
+Citations:
+[1] Steinhardt, P. J., & Turok, N. (2002). "A Cyclic Model of the Universe"
+[2] Gödel, K. (1949). "An Example of a New Type of Cosmological Solutions"
+[3] Thorne, K. S. (1988). "Closed Timelike Curves"`
+                },
+                v2: {
+                    title: "v2.0 - Philosophical Reframe",
+                    date: "November 1, 2025",
+                    content: `PHILOSOPHICAL EXPLORATION: TIME AS METAPHORICAL CYLINDER
+
+This version explicitly positions the model as philosophical speculation:
+
+WHAT IF TIME WAS SHAPED LIKE A CYLINDER?
+
+Not as a scientific claim, but as a conceptual tool for thinking differently about temporality:
+
+1. LINEAR EXPERIENCE: We perceive time flowing in one direction (along the cylinder's length)
+
+2. CYCLICAL PATTERNS: History seems to repeat (circumferential motion around the cylinder)
+
+3. DIMENSIONAL DEPTH: Perhaps there are aspects of time we don't directly experience (the cylinder's interior)
+
+PHILOSOPHICAL IMPLICATIONS:
+• Challenges linear causality assumptions
+• Suggests cyclical and progressive time can coexist
+• Provides a geometric metaphor for temporal complexity
+
+This is explicitly a THOUGHT EXPERIMENT, not a scientific hypothesis.
+It's a tool for philosophical inquiry into the nature of time.`
+                }
+            },
+            review: {
+                reviewer: "Galactus",
+                date: "October 25, 2025",
+                findings: [
+                    "Missing academic citations for Big Bounce cosmology claims",
+                    "Time arrow contradiction not adequately addressed",
+                    "Unclear distinction between scientific hypothesis and philosophical speculation",
+                    "Need to acknowledge Phillip Badenhorst's original student work"
+                ],
+                recommendations: [
+                    "Add proper citations to Big Bounce literature",
+                    "Reference General Relativity CTC research",
+                    "Explicitly frame as metaphorical/philosophical exploration",
+                    "Create separate tracks for scientific vs. philosophical presentation"
+                ]
+            }
+        };
+
+        const outputTemplates = {
+            scientific: `SCIENTIFIC ABSTRACT
+"Cylindrical Topology as a Framework for Understanding Temporal Structure"
+
+ABSTRACT:
+This paper explores the mathematical and physical implications of modeling time with a cylindrical topology. Drawing on established research in cyclic cosmology (Steinhardt & Turok, 2002) and closed timelike curves in General Relativity (Gödel, 1949), we examine whether cylindrical time models offer novel insights into temporal structure.
+
+INTRODUCTION:
+Traditional linear time models face challenges in cosmology, particularly regarding the universe's beginning and potential cyclical nature. This work investigates cylindrical topologies as an alternative framework.
+
+THEORETICAL FOUNDATION:
+• Big Bounce cosmology suggests cyclic universal expansion/contraction
+• CTCs in GR demonstrate time need not be simply connected
+• Cylindrical manifolds combine linear and cyclical properties
+
+METHODOLOGY:
+Mathematical modeling of temporal flow on cylindrical manifolds, with analysis of:
+- Causal structure preservation
+- Compatibility with known physics
+- Testable predictions
+
+CITATIONS:
+[1] Steinhardt, P. J., & Turok, N. (2002). "A Cyclic Model of the Universe"
+[2] Gödel, K. (1949). "An Example of a New Type of Cosmological Solutions"
+[3] Thorne, K. S. (1988). "Closed Timelike Curves"
+[4] Badenhorst, P. (2024). "Alternative Time Models" [Student Research, UP]
+
+CONCLUSION:
+While speculative, cylindrical time models warrant further mathematical investigation.
+
+STATUS: Requires peer review and mathematical rigor verification`,
+
+            philosophical: `PHILOSOPHICAL ESSAY
+"The Cylinder of Time: A Metaphorical Exploration"
+
+What if we conceived of time not as a line stretching from past to future, but as a cylinder—a shape that is simultaneously linear and circular, finite yet unbounded?
+
+THE METAPHOR:
+Imagine standing on the surface of a cylinder. You can walk forward along its length (linear progression), but you can also walk around its circumference (cyclical return). Both directions are real, both are valid ways of moving through the space.
+
+This is not a scientific claim about time's actual structure. Rather, it's a conceptual tool—a way of thinking that might help us escape the tyranny of purely linear causality.
+
+PHILOSOPHICAL IMPLICATIONS:
+
+1. COEXISTENCE OF LINEAR AND CYCLICAL
+We don't have to choose between "time is a line" and "time is a circle." The cylinder allows both. History progresses, yet patterns repeat.
+
+2. HIDDEN DIMENSIONS
+A cylinder has an interior we can't see from its surface. Perhaps time has aspects beyond our direct experience—not mystical, but simply orthogonal to our perception.
+
+3. BOUNDED INFINITY
+A cylinder's circumference is finite, yet you can walk around it forever. This mirrors how we experience time: each moment is finite, yet the flow seems endless.
+
+CONCLUSION:
+The Badenhorst Cylinder is not physics—it's philosophy. It's a lens for examining our assumptions about temporality, causality, and experience.
+
+Sometimes the most valuable ideas are not those that describe reality, but those that help us see it differently.
+
+NOTE: This is explicitly speculative philosophy, not empirical science.`,
+
+            comic: `COMIC SCRIPT - ISSUE #3: "TRANSCENDENCE"
+Panel Sequence for the Badenhorst Cylinder Concept
+
+PANEL 1: [Full Page Splash]
+A massive cylindrical structure floats in the void of space, glowing with ethereal blue light. Stars streak around its circumference.
+
+CAPTION: "What if time wasn't a line... but a shape?"
+
+PANEL 2: [Character close-up]
+Our protagonist (Vessel) stands before a holographic projection of the cylinder, hand outstretched.
+
+VESSEL: "Galactus showed me this. The Badenhorst Cylinder. Time as geometry."
+
+PANEL 3: [Diagram view]
+The cylinder rotates, showing arrows flowing both around its circumference and along its length.
+
+VESSEL: "We experience it linearly—past to future. But what if it also curves back on itself?"
+
+PANEL 4: [Action sequence]
+Vessel steps INTO the hologram, body fragmenting into light particles.
+
+VESSEL: "History doesn't just move forward. It echoes. Patterns repeat."
+
+PANEL 5: [Surreal imagery]
+Inside the cylinder's interior—a space of impossible geometry where past and future coexist.
+
+CAPTION: "Not because time is a circle. Because it's a cylinder."
+
+PANEL 6: [Revelation]
+Vessel emerges, eyes glowing with understanding.
+
+VESSEL: "Linear and cyclical. Both true. Both real."
+
+PANEL 7: [Final beat]
+Pull back to show the cylinder is actually the structure of the Nexus itself.
+
+CAPTION: "Some ideas don't describe reality. They help us see it differently."
+
+END SEQUENCE
+
+Art Notes: Heavy use of blues and purples. Geometric precision mixed with organic flow. Think Moebius meets Jim Starlin.`,
+
+            simulation: `INTERACTIVE SIMULATION PARAMETERS
+"Badenhorst Cylinder: Educational Visualization"
+
+SIMULATION OVERVIEW:
+An interactive 3D visualization allowing users to explore cylindrical time topology through direct manipulation.
+
+CORE PARAMETERS:
+• Cylinder radius: 1.0 (adjustable 0.5 - 5.0)
+• Cylinder height: 10.0 (adjustable 5.0 - 20.0)
+• Time flow rate: 1.0 (adjustable 0.1 - 3.0)
+• Particle count: 1000 (represents temporal "moments")
+
+INTERACTIVE FEATURES:
+
+1. CIRCUMFERENTIAL MOTION
+   - Click to release particles around cylinder's circumference
+   - Visualizes cyclical time patterns
+   - Color-coded by "temporal phase"
+
+2. AXIAL MOTION
+   - Drag to move particles along cylinder's length
+   - Visualizes linear time progression
+   - Gradient from past (blue) to future (purple)
+
+3. COMBINED MOTION
+   - Particles spiral around cylinder (helix pattern)
+   - Demonstrates coexistence of linear and cyclical
+
+4. FRAME-DRAGGING EFFECT
+   - Simulate gravitational time dilation
+   - Particles near cylinder surface move slower
+   - Based on simplified GR equations
+
+EDUCATIONAL NOTES:
+• "This is a metaphorical visualization, not a scientific model"
+• "Helps understand how different temporal geometries might work"
+• "Inspired by theoretical physics but explicitly speculative"
+
+TECHNICAL STACK:
+• Three.js for 3D rendering
+• WebGL shaders for particle effects
+• Interactive controls via dat.GUI
+• Educational tooltips explaining each concept
+
+DEPLOYMENT:
+Can be embedded in educational websites, museums, or philosophical discussions about time.
+
+PURPOSE: Not to prove the cylinder model, but to make abstract temporal concepts tangible and explorable.`
+        };
+
+        function showVersion(version) {
+            const versionData = ideaData.versions[version];
+            const output = document.getElementById('output');
+            
+            output.innerHTML = `
+                <div class="output-display">
+                    <h3>${versionData.title}</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 20px;">${versionData.date}</p>
+                    <pre>${versionData.content}</pre>
+                </div>
+            `;
+            output.classList.remove('hidden');
+            output.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function showReview() {
+            const reviewPanel = document.getElementById('review-panel');
+            reviewPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            reviewPanel.style.animation = 'pulse 1s ease-in-out 2';
+        }
+
+        function generateOutput(format) {
+            const output = document.getElementById('output');
+            const formatTitles = {
+                scientific: '📄 SCIENTIFIC PAPER OUTPUT',
+                philosophical: '💭 PHILOSOPHICAL ESSAY OUTPUT',
+                comic: '🎨 COMIC NARRATIVE OUTPUT',
+                simulation: '🌐 INTERACTIVE SIMULATION OUTPUT'
+            };
+            
+            output.innerHTML = `
+                <div class="output-display">
+                    <h3>${formatTitles[format]}</h3>
+                    <pre>${outputTemplates[format]}</pre>
+                </div>
+            `;
+            output.classList.remove('hidden');
+            output.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Initialize with a subtle animation
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Nexus v1.0 - Idea Evolution Tracker Initialized');
+            console.log('Managing intellectual evolution through self-correction');
+        });
+    </script>
+</body>
+</html>
