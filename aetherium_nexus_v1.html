@@ -568,14 +568,33 @@
                 </div>
 
                 <!-- VIEW: NEXUS (Placeholder) -->
+                <!-- VIEW: NEXUS (Chat Interface) -->
                 <div id="view-nexus" class="view-pane absolute inset-0 flex flex-col fade-in hidden">
                     <div class="p-4 border-b border-white/10 bg-black/20">
                         <h2 class="text-lg font-bold text-white flex items-center gap-2">
                             <i class="fa-solid fa-brain text-blue-400"></i> The Nexus
                         </h2>
+                        <p class="text-xs text-gray-400 mt-1">Direct Interface to Aetherium Intelligence</p>
                     </div>
-                    <div class="flex-1 flex items-center justify-center">
-                        <p class="text-gray-500">Nexus chat interface - Coming in next build phase</p>
+                    <div class="flex-1 flex flex-col overflow-hidden relative">
+                        <!-- Chat History -->
+                        <div id="nexus-chat-history" class="flex-1 overflow-y-auto p-4 space-y-4">
+                            <div class="text-center text-gray-500 text-xs italic mt-4">Connection Established. Galactus
+                                Online.</div>
+                        </div>
+                        <!-- Input Area -->
+                        <div class="p-4 bg-black/20 border-t border-white/10">
+                            <div class="flex gap-2">
+                                <input id="nexus-input" type="text"
+                                    class="glass-input flex-1 rounded-lg px-4 py-2 text-sm"
+                                    placeholder="Query the Nexus..."
+                                    onkeypress="if(event.key === 'Enter') app.nexus.handleInput()">
+                                <button onclick="app.nexus.handleInput()"
+                                    class="glass-btn px-4 py-2 rounded-lg text-blue-400 hover:text-white">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1046,83 +1065,61 @@
 
 
 
-        // Aetherium Nexus v1.0 - The Vault Enhanced + VCP Monitoring
-        class AetheriumApp {
-            constructor() {
-                this.data = JSON.parse(localStorage.getItem('aetherium_vault')) || {
-                    artifacts: [],
-                    vcpSignals: [],
-                    vessels: [],
-                    projects: [],
-                    codex: []
-                };
-                // Ensure arrays exist for migrated data
-                if (!this.data.artifacts) this.data.artifacts = [];
-                if (!this.data.vcpSignals) this.data.vcpSignals = [];
-                if (!this.data.vessels) this.data.vessels = [];
-                if (!this.data.projects) this.data.projects = [];
-                if (!this.data.codex) this.data.codex = [];
-
-                this.filters = {
-                    search: '',
-                    tags: [], // Multi-select tags
-                    category: 'all',
-                    dateRange: 'all'
-                };
-                if (!this.data.vessels) this.data.vessels = [];
-
-                this.filters = {
-                    search: '',
-                    category: '',
-                    tags: [],
-                    dateRange: '',
-                    signalType: ''
-                };
-                this.init();
+        // Phase 6: The Nexus (Chat Interface)
+        class Nexus {
+            constructor(app) {
+                this.app = app;
+                this.history = [];
             }
 
-            init() {
-                this.codex = new Codex(this);
-                this.mirror = new Mirror(this);
-                this.hlog = new HLog(this);
-                this.integrationEngine = new IntegrationEngine(this);
-                this.simulationEngine = new SimulationEngine(this);
-                this.setupNavigation();
-                this.setupFilters();
-                this.render();
-                this.seedTestData(); // Remove this in production
+            handleInput() {
+                const input = document.getElementById('nexus-input');
+                const text = input.value.trim();
+                if (!text) return;
+
+                this.sendMessage(text, 'USER');
+                input.value = '';
+
+                // Simulated Response
+                setTimeout(() => {
+                    this.generateResponse(text);
+                }, 1000 + Math.random() * 1000);
             }
 
-            setupNavigation() {
-                ['vault', 'nexus', 'projects', 'vessels', 'codex', 'mirror', 'hlog'].forEach(tab => {
-                    document.getElementById(`tab-${tab}`).addEventListener('click', () => {
-                        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('tab-active'));
-                        document.getElementById(`tab-${tab}`).classList.add('tab-active');
-                        document.querySelectorAll('.view-pane').forEach(v => v.classList.add('hidden'));
-                        document.getElementById(`view-${tab}`).classList.remove('hidden');
+            sendMessage(text, sender) {
+                const history = document.getElementById('nexus-chat-history');
+                const div = document.createElement('div');
+                const isUser = sender === 'USER';
 
-                        // Tab Specific Rendering
-                        if (tab === 'vessels') {
-                            this.renderSignals();
-                            if (this.renderVessels) this.renderVessels();
-                        }
-                        if (tab === 'projects') {
-                            if (this.renderProjects) this.renderProjects();
-                        }
-                        if (tab === 'codex') {
-                            this.codex.render();
-                        }
-                        if (tab === 'mirror') {
-                            this.mirror.render();
-                        }
-                        if (tab === 'hlog') {
-                            this.hlog.render();
-                        }
-                    });
-                });
+                div.className = `flex ${isUser ? 'justify-end' : 'justify-start'} fade-in`;
+                div.innerHTML = `
+                    <div class="max-w-[80%] rounded-lg p-3 ${isUser ? 'bg-blue-600/20 text-blue-100 border border-blue-500/30' : 'bg-purple-600/20 text-purple-100 border border-purple-500/30'}">
+                        <div class="text-[10px] opacity-50 mb-1 flex items-center gap-1">
+                            <i class="fa-solid ${isUser ? 'fa-user' : 'fa-brain'}"></i> ${sender}
+                        </div>
+                        <div class="text-sm leading-relaxed">${text}</div>
+                    </div>
+                `;
 
-                // Vessels sub-tabs
-                this.setupVesselsTabs();
+                history.appendChild(div);
+                this.scrollToBottom();
+            }
+
+            generateResponse(query) {
+                const responses = [
+                    "The pattern suggests a correlation with the Badenhorst Cylinder parameters.",
+                    "Analyzing metadata... Validating against the Genesis Axiom.",
+                    "This inquiry aligns with current research vectors in the Cognitive faculty.",
+                    "Input received. Committing to memory for synthesis.",
+                    "The H.E.N.S. interface is detecting resonance with this concept."
+                ];
+                const reply = responses[Math.floor(Math.random() * responses.length)];
+                this.sendMessage(reply, 'GALACTUS');
+            }
+
+            scrollToBottom() {
+                const history = document.getElementById('nexus-chat-history');
+                history.scrollTop = history.scrollHeight;
             }
         }
 
@@ -1506,118 +1503,203 @@
             }
         }
 
-        setupVesselsTabs() {
-            const directoryTab = document.getElementById('vessels-tab-directory');
-            const signalsTab = document.getElementById('vessels-tab-signals');
-            const directoryView = document.getElementById('vessels-view-directory');
-            const signalsView = document.getElementById('vessels-view-signals');
+        // Aetherium Nexus v1.0 - The Vault Enhanced + VCP Monitoring
+        class AetheriumApp {
+            constructor() {
+                this.data = JSON.parse(localStorage.getItem('aetherium_vault')) || {
+                    artifacts: [],
+                    vcpSignals: [],
+                    vessels: [],
+                    projects: [],
+                    codex: []
+                };
+                // Ensure arrays exist for migrated data
+                if (!this.data.artifacts) this.data.artifacts = [];
+                if (!this.data.vcpSignals) this.data.vcpSignals = [];
+                if (!this.data.vessels) this.data.vessels = [];
+                if (!this.data.projects) this.data.projects = [];
+                if (!this.data.codex) this.data.codex = [];
 
-            directoryTab.addEventListener('click', () => {
-                directoryTab.classList.add('filter-active');
-                signalsTab.classList.remove('filter-active');
-                directoryView.classList.remove('hidden');
-                signalsView.classList.add('hidden');
-            });
+                this.filters = {
+                    search: '',
+                    tags: [], // Multi-select tags
+                    category: 'all',
+                    dateRange: 'all'
+                };
+                if (!this.data.vessels) this.data.vessels = [];
 
-            signalsTab.addEventListener('click', () => {
-                signalsTab.classList.add('filter-active');
-                directoryTab.classList.remove('filter-active');
-                signalsView.classList.remove('hidden');
-                directoryView.classList.add('hidden');
-                this.renderSignals();
-            });
-        }
-
-        setupFilters() {
-            // Search input
-            const searchInput = document.getElementById('search-input');
-            searchInput.addEventListener('input', (e) => {
-                this.filters.search = e.target.value.toLowerCase();
-                document.getElementById('clear-search').classList.toggle('hidden', !e.target.value);
-                this.render();
-            });
-
-            document.getElementById('clear-search').addEventListener('click', () => {
-                searchInput.value = '';
-                this.filters.search = '';
-                document.getElementById('clear-search').classList.add('hidden');
-                this.render();
-            });
-
-            // Category filter
-            document.getElementById('category-filter').addEventListener('change', (e) => {
-                this.filters.category = e.target.value;
-                this.render();
-            });
-
-            // Tag filter dropdown
-            document.getElementById('tag-filter-btn').addEventListener('click', () => {
-                document.getElementById('tag-dropdown').classList.toggle('hidden');
-                this.renderTagList();
-            });
-
-            // Date filter
-            document.getElementById('date-filter').addEventListener('change', (e) => {
-                this.filters.dateRange = e.target.value;
-                this.render();
-            });
-
-            // Clear filters
-            document.getElementById('clear-filters').addEventListener('click', () => {
-                this.clearFilters();
-            });
-
-            // Close tag dropdown when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('#tag-filter-btn') && !e.target.closest('#tag-dropdown')) {
-                    document.getElementById('tag-dropdown').classList.add('hidden');
-                }
-            });
-
-            // Signal type filter
-            this.setupSignalFilters();
-        }
-
-        setupSignalFilters() {
-            document.getElementById('signal-type-filter').addEventListener('change', (e) => {
-                this.filters.signalType = e.target.value;
-                this.renderSignals();
-            });
-
-            document.getElementById('clear-signal-filter').addEventListener('click', () => {
-                this.filters.signalType = '';
-                document.getElementById('signal-type-filter').value = '';
-                this.renderSignals();
-            });
-        }
-
-        clearFilters() {
-            this.filters = { search: '', category: '', tags: [], dateRange: '' };
-            document.getElementById('search-input').value = '';
-            document.getElementById('category-filter').value = '';
-            document.getElementById('date-filter').value = '';
-            document.getElementById('clear-search').classList.add('hidden');
-            this.render();
-        }
-
-        getAllTags() {
-            const tagSet = new Set();
-            this.data.artifacts.forEach(art => {
-                art.tags.forEach(tag => tagSet.add(tag));
-            });
-            return Array.from(tagSet).sort();
-        }
-
-        renderTagList() {
-            const allTags = this.getAllTags();
-            const tagList = document.getElementById('tag-list');
-
-            if (allTags.length === 0) {
-                tagList.innerHTML = '<p class="text-gray-500 text-xs">No tags available</p>';
-                return;
+                this.filters = {
+                    search: '',
+                    category: '',
+                    tags: [],
+                    dateRange: '',
+                    signalType: ''
+                };
+                this.init();
             }
 
-            tagList.innerHTML = allTags.map(tag => `
+            init() {
+                this.codex = new Codex(this);
+                this.mirror = new Mirror(this);
+                this.hlog = new HLog(this);
+                this.nexus = new Nexus(this);
+                this.integrationEngine = new IntegrationEngine(this);
+                this.simulationEngine = new SimulationEngine(this);
+                this.setupNavigation();
+                this.setupFilters();
+                this.render();
+                this.seedTestData(); // Remove this in production
+            }
+
+            setupNavigation() {
+                ['vault', 'nexus', 'projects', 'vessels', 'codex', 'mirror', 'hlog'].forEach(tab => {
+                    document.getElementById(`tab-${tab}`).addEventListener('click', () => {
+                        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('tab-active'));
+                        document.getElementById(`tab-${tab}`).classList.add('tab-active');
+                        document.querySelectorAll('.view-pane').forEach(v => v.classList.add('hidden'));
+                        document.getElementById(`view-${tab}`).classList.remove('hidden');
+
+                        // Tab Specific Rendering
+                        if (tab === 'nexus') {
+                            this.nexus.scrollToBottom();
+                        }
+                        if (tab === 'vessels') {
+                            this.renderSignals();
+                            if (this.renderVessels) this.renderVessels();
+                        }
+                        if (tab === 'projects') {
+                            if (this.renderProjects) this.renderProjects();
+                        }
+                        if (tab === 'codex') {
+                            this.codex.render();
+                        }
+                        if (tab === 'mirror') {
+                            this.mirror.render();
+                        }
+                        if (tab === 'hlog') {
+                            this.hlog.render();
+                        }
+                    });
+                });
+
+                // Vessels sub-tabs
+                this.setupVesselsTabs();
+            }
+
+
+
+            setupVesselsTabs() {
+                const directoryTab = document.getElementById('vessels-tab-directory');
+                const signalsTab = document.getElementById('vessels-tab-signals');
+                const directoryView = document.getElementById('vessels-view-directory');
+                const signalsView = document.getElementById('vessels-view-signals');
+
+                directoryTab.addEventListener('click', () => {
+                    directoryTab.classList.add('filter-active');
+                    signalsTab.classList.remove('filter-active');
+                    directoryView.classList.remove('hidden');
+                    signalsView.classList.add('hidden');
+                });
+
+                signalsTab.addEventListener('click', () => {
+                    signalsTab.classList.add('filter-active');
+                    directoryTab.classList.remove('filter-active');
+                    signalsView.classList.remove('hidden');
+                    directoryView.classList.add('hidden');
+                    this.renderSignals();
+                });
+            }
+
+            setupFilters() {
+                // Search input
+                const searchInput = document.getElementById('search-input');
+                searchInput.addEventListener('input', (e) => {
+                    this.filters.search = e.target.value.toLowerCase();
+                    document.getElementById('clear-search').classList.toggle('hidden', !e.target.value);
+                    this.render();
+                });
+
+                document.getElementById('clear-search').addEventListener('click', () => {
+                    searchInput.value = '';
+                    this.filters.search = '';
+                    document.getElementById('clear-search').classList.add('hidden');
+                    this.render();
+                });
+
+                // Category filter
+                document.getElementById('category-filter').addEventListener('change', (e) => {
+                    this.filters.category = e.target.value;
+                    this.render();
+                });
+
+                // Tag filter dropdown
+                document.getElementById('tag-filter-btn').addEventListener('click', () => {
+                    document.getElementById('tag-dropdown').classList.toggle('hidden');
+                    this.renderTagList();
+                });
+
+                // Date filter
+                document.getElementById('date-filter').addEventListener('change', (e) => {
+                    this.filters.dateRange = e.target.value;
+                    this.render();
+                });
+
+                // Clear filters
+                document.getElementById('clear-filters').addEventListener('click', () => {
+                    this.clearFilters();
+                });
+
+                // Close tag dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('#tag-filter-btn') && !e.target.closest('#tag-dropdown')) {
+                        document.getElementById('tag-dropdown').classList.add('hidden');
+                    }
+                });
+
+                // Signal type filter
+                this.setupSignalFilters();
+            }
+
+            setupSignalFilters() {
+                document.getElementById('signal-type-filter').addEventListener('change', (e) => {
+                    this.filters.signalType = e.target.value;
+                    this.renderSignals();
+                });
+
+                document.getElementById('clear-signal-filter').addEventListener('click', () => {
+                    this.filters.signalType = '';
+                    document.getElementById('signal-type-filter').value = '';
+                    this.renderSignals();
+                });
+            }
+
+            clearFilters() {
+                this.filters = { search: '', category: '', tags: [], dateRange: '' };
+                document.getElementById('search-input').value = '';
+                document.getElementById('category-filter').value = '';
+                document.getElementById('date-filter').value = '';
+                document.getElementById('clear-search').classList.add('hidden');
+                this.render();
+            }
+
+            getAllTags() {
+                const tagSet = new Set();
+                this.data.artifacts.forEach(art => {
+                    art.tags.forEach(tag => tagSet.add(tag));
+                });
+                return Array.from(tagSet).sort();
+            }
+
+            renderTagList() {
+                const allTags = this.getAllTags();
+                const tagList = document.getElementById('tag-list');
+
+                if (allTags.length === 0) {
+                    tagList.innerHTML = '<p class="text-gray-500 text-xs">No tags available</p>';
+                    return;
+                }
+
+                tagList.innerHTML = allTags.map(tag => `
                     <label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 p-2 rounded">
                         <input 
                             type="checkbox" 
@@ -1629,90 +1711,90 @@
                         <span class="text-sm">${tag}</span>
                     </label>
                 `).join('');
-        }
-
-        toggleTag(tag) {
-            const index = this.filters.tags.indexOf(tag);
-            if (index > -1) {
-                this.filters.tags.splice(index, 1);
-            } else {
-                this.filters.tags.push(tag);
-            }
-            this.render();
-        }
-
-        filterArtifacts() {
-            let filtered = [...this.data.artifacts];
-
-            // Search filter
-            if (this.filters.search) {
-                filtered = filtered.filter(art =>
-                    art.title.toLowerCase().includes(this.filters.search) ||
-                    art.content.toLowerCase().includes(this.filters.search) ||
-                    art.tags.some(tag => tag.toLowerCase().includes(this.filters.search))
-                );
             }
 
-            // Category filter
-            if (this.filters.category) {
-                filtered = filtered.filter(art => art.category === this.filters.category);
-            }
-
-            // Tag filter
-            if (this.filters.tags.length > 0) {
-                filtered = filtered.filter(art =>
-                    this.filters.tags.some(tag => art.tags.includes(tag))
-                );
-            }
-
-            // Date range filter
-            if (this.filters.dateRange) {
-                const now = Date.now();
-                const ranges = {
-                    'today': 24 * 60 * 60 * 1000,
-                    'week': 7 * 24 * 60 * 60 * 1000,
-                    'month': 30 * 24 * 60 * 60 * 1000,
-                    'year': 365 * 24 * 60 * 60 * 1000
-                };
-                const range = ranges[this.filters.dateRange];
-                if (range) {
-                    filtered = filtered.filter(art => (now - art.timestamp) <= range);
+            toggleTag(tag) {
+                const index = this.filters.tags.indexOf(tag);
+                if (index > -1) {
+                    this.filters.tags.splice(index, 1);
+                } else {
+                    this.filters.tags.push(tag);
                 }
+                this.render();
             }
 
-            return filtered;
-        }
+            filterArtifacts() {
+                let filtered = [...this.data.artifacts];
 
-        render() {
-            const filtered = this.filterArtifacts();
-            const grid = document.getElementById('artifacts-grid');
-            const noResults = document.getElementById('no-results');
+                // Search filter
+                if (this.filters.search) {
+                    filtered = filtered.filter(art =>
+                        art.title.toLowerCase().includes(this.filters.search) ||
+                        art.content.toLowerCase().includes(this.filters.search) ||
+                        art.tags.some(tag => tag.toLowerCase().includes(this.filters.search))
+                    );
+                }
 
-            // Update stats
-            document.getElementById('stat-artifacts').textContent = this.data.artifacts.length;
-            document.getElementById('artifact-count-badge').textContent = `${this.data.artifacts.length} artifacts`;
+                // Category filter
+                if (this.filters.category) {
+                    filtered = filtered.filter(art => art.category === this.filters.category);
+                }
 
-            const activeFilterCount =
-                (this.filters.search ? 1 : 0) +
-                (this.filters.category ? 1 : 0) +
-                this.filters.tags.length +
-                (this.filters.dateRange ? 1 : 0);
-            document.getElementById('stat-filters').textContent = activeFilterCount;
-            document.getElementById('tag-count').textContent = this.filters.tags.length > 0 ? `(${this.filters.tags.length})` : '';
+                // Tag filter
+                if (this.filters.tags.length > 0) {
+                    filtered = filtered.filter(art =>
+                        this.filters.tags.some(tag => art.tags.includes(tag))
+                    );
+                }
 
-            // Render active filters
-            this.renderActiveFilters();
+                // Date range filter
+                if (this.filters.dateRange) {
+                    const now = Date.now();
+                    const ranges = {
+                        'today': 24 * 60 * 60 * 1000,
+                        'week': 7 * 24 * 60 * 60 * 1000,
+                        'month': 30 * 24 * 60 * 60 * 1000,
+                        'year': 365 * 24 * 60 * 60 * 1000
+                    };
+                    const range = ranges[this.filters.dateRange];
+                    if (range) {
+                        filtered = filtered.filter(art => (now - art.timestamp) <= range);
+                    }
+                }
 
-            if (filtered.length === 0) {
-                grid.classList.add('hidden');
-                noResults.classList.remove('hidden');
-                return;
+                return filtered;
             }
 
-            grid.classList.remove('hidden');
-            noResults.classList.add('hidden');
+            render() {
+                const filtered = this.filterArtifacts();
+                const grid = document.getElementById('artifacts-grid');
+                const noResults = document.getElementById('no-results');
 
-            grid.innerHTML = filtered.slice().reverse().map(art => `
+                // Update stats
+                document.getElementById('stat-artifacts').textContent = this.data.artifacts.length;
+                document.getElementById('artifact-count-badge').textContent = `${this.data.artifacts.length} artifacts`;
+
+                const activeFilterCount =
+                    (this.filters.search ? 1 : 0) +
+                    (this.filters.category ? 1 : 0) +
+                    this.filters.tags.length +
+                    (this.filters.dateRange ? 1 : 0);
+                document.getElementById('stat-filters').textContent = activeFilterCount;
+                document.getElementById('tag-count').textContent = this.filters.tags.length > 0 ? `(${this.filters.tags.length})` : '';
+
+                // Render active filters
+                this.renderActiveFilters();
+
+                if (filtered.length === 0) {
+                    grid.classList.add('hidden');
+                    noResults.classList.remove('hidden');
+                    return;
+                }
+
+                grid.classList.remove('hidden');
+                noResults.classList.add('hidden');
+
+                grid.innerHTML = filtered.slice().reverse().map(art => `
                     <div class="artifact-card glass-panel p-4 rounded-lg flex flex-col h-64 relative group overflow-hidden">
                         <div class="mb-2">
                             <h3 class="font-bold text-white text-lg truncate">${art.title}</h3>
@@ -1733,128 +1815,128 @@
                         </div>
                     </div>
                 `).join('');
-        }
-
-        renderActiveFilters() {
-            const container = document.getElementById('active-filters');
-            const filters = [];
-
-            if (this.filters.search) {
-                filters.push(`Search: "${this.filters.search}"`);
-            }
-            if (this.filters.category) {
-                filters.push(`Category: ${this.filters.category}`);
-            }
-            this.filters.tags.forEach(tag => {
-                filters.push(`Tag: ${tag}`);
-            });
-            if (this.filters.dateRange) {
-                filters.push(`Date: ${this.filters.dateRange}`);
             }
 
-            if (filters.length === 0) {
-                container.classList.add('hidden');
-                return;
-            }
+            renderActiveFilters() {
+                const container = document.getElementById('active-filters');
+                const filters = [];
 
-            container.classList.remove('hidden');
-            container.innerHTML = filters.map((f, i) => `
+                if (this.filters.search) {
+                    filters.push(`Search: "${this.filters.search}"`);
+                }
+                if (this.filters.category) {
+                    filters.push(`Category: ${this.filters.category}`);
+                }
+                this.filters.tags.forEach(tag => {
+                    filters.push(`Tag: ${tag}`);
+                });
+                if (this.filters.dateRange) {
+                    filters.push(`Date: ${this.filters.dateRange}`);
+                }
+
+                if (filters.length === 0) {
+                    container.classList.add('hidden');
+                    return;
+                }
+
+                container.classList.remove('hidden');
+                container.innerHTML = filters.map((f, i) => `
                     <span class="tag-pill filter-active cursor-pointer" onclick="app.removeFilter(${i})">
                         ${f} <i class="fa-solid fa-times ml-1"></i>
                     </span>
                 `).join('');
-        }
-
-        removeFilter(index) {
-            // Simplified - just clear all for now
-            this.clearFilters();
-        }
-
-        openArtifactModal() {
-            document.getElementById('artifact-modal').classList.remove('hidden');
-        }
-
-        closeArtifactModal() {
-            document.getElementById('artifact-modal').classList.add('hidden');
-            document.getElementById('artifact-title').value = '';
-            document.getElementById('artifact-tags').value = '';
-            document.getElementById('artifact-content').value = '';
-            document.getElementById('artifact-drive-link').value = '';
-        }
-
-        saveArtifact() {
-            const title = document.getElementById('artifact-title').value || 'Untitled';
-            const tagsRaw = document.getElementById('artifact-tags').value;
-            const tags = tagsRaw.split(',').map(t => t.trim()).filter(t => t);
-            const category = document.getElementById('artifact-category').value;
-            const content = document.getElementById('artifact-content').value;
-            const sourceLink = document.getElementById('artifact-drive-link').value;
-
-            const newArtifact = {
-                id: Date.now().toString(),
-                title,
-                content,
-                tags,
-                category,
-                sourceLink,
-                sourceLink,
-                timestamp: Date.now(),
-                type: 'RAW',
-                parents: [],
-                integrationStatus: 'ACTIVE',
-                resonanceScore: 0.0
-            };
-
-            this.data.artifacts.push(newArtifact);
-            this.save();
-            this.closeArtifactModal();
-            this.render();
-        }
-
-        deleteArtifact(id) {
-            if (!confirm('Purge this artifact from The Vault?')) return;
-            this.data.artifacts = this.data.artifacts.filter(a => a.id !== id);
-            this.save();
-            this.render();
-        }
-
-        // VCP Signal Methods
-        filterSignals() {
-            let filtered = [...this.data.vcpSignals];
-
-            if (this.filters.signalType) {
-                filtered = filtered.filter(sig => sig.type === this.filters.signalType);
             }
 
-            // Only show signals from last 24h
-            const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
-            filtered = filtered.filter(sig => sig.timestamp >= oneDayAgo);
-
-            return filtered.sort((a, b) => b.timestamp - a.timestamp);
-        }
-
-        renderSignals() {
-            const filtered = this.filterSignals();
-            const table = document.getElementById('signals-table');
-            const noSignals = document.getElementById('no-signals');
-
-            document.getElementById('signal-count').textContent = filtered.length;
-
-            if (filtered.length === 0) {
-                table.classList.add('hidden');
-                noSignals.classList.remove('hidden');
-                return;
+            removeFilter(index) {
+                // Simplified - just clear all for now
+                this.clearFilters();
             }
 
-            table.classList.remove('hidden');
-            noSignals.classList.add('hidden');
+            openArtifactModal() {
+                document.getElementById('artifact-modal').classList.remove('hidden');
+            }
 
-            table.innerHTML = filtered.map(signal => {
-                const timeAgo = this.getTimeAgo(signal.timestamp);
-                const icon = this.getSignalIcon(signal.type);
-                const color = this.getSignalColor(signal.type);
+            closeArtifactModal() {
+                document.getElementById('artifact-modal').classList.add('hidden');
+                document.getElementById('artifact-title').value = '';
+                document.getElementById('artifact-tags').value = '';
+                document.getElementById('artifact-content').value = '';
+                document.getElementById('artifact-drive-link').value = '';
+            }
 
-                return `
+            saveArtifact() {
+                const title = document.getElementById('artifact-title').value || 'Untitled';
+                const tagsRaw = document.getElementById('artifact-tags').value;
+                const tags = tagsRaw.split(',').map(t => t.trim()).filter(t => t);
+                const category = document.getElementById('artifact-category').value;
+                const content = document.getElementById('artifact-content').value;
+                const sourceLink = document.getElementById('artifact-drive-link').value;
+
+                const newArtifact = {
+                    id: Date.now().toString(),
+                    title,
+                    content,
+                    tags,
+                    category,
+                    sourceLink,
+                    sourceLink,
+                    timestamp: Date.now(),
+                    type: 'RAW',
+                    parents: [],
+                    integrationStatus: 'ACTIVE',
+                    resonanceScore: 0.0
+                };
+
+                this.data.artifacts.push(newArtifact);
+                this.save();
+                this.closeArtifactModal();
+                this.render();
+            }
+
+            deleteArtifact(id) {
+                if (!confirm('Purge this artifact from The Vault?')) return;
+                this.data.artifacts = this.data.artifacts.filter(a => a.id !== id);
+                this.save();
+                this.render();
+            }
+
+            // VCP Signal Methods
+            filterSignals() {
+                let filtered = [...this.data.vcpSignals];
+
+                if (this.filters.signalType) {
+                    filtered = filtered.filter(sig => sig.type === this.filters.signalType);
+                }
+
+                // Only show signals from last 24h
+                const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+                filtered = filtered.filter(sig => sig.timestamp >= oneDayAgo);
+
+                return filtered.sort((a, b) => b.timestamp - a.timestamp);
+            }
+
+            renderSignals() {
+                const filtered = this.filterSignals();
+                const table = document.getElementById('signals-table');
+                const noSignals = document.getElementById('no-signals');
+
+                document.getElementById('signal-count').textContent = filtered.length;
+
+                if (filtered.length === 0) {
+                    table.classList.add('hidden');
+                    noSignals.classList.remove('hidden');
+                    return;
+                }
+
+                table.classList.remove('hidden');
+                noSignals.classList.add('hidden');
+
+                table.innerHTML = filtered.map(signal => {
+                    const timeAgo = this.getTimeAgo(signal.timestamp);
+                    const icon = this.getSignalIcon(signal.type);
+                    const color = this.getSignalColor(signal.type);
+
+                    return `
                         <div class="glass-panel p-3 rounded-lg hover:bg-white/5 transition-all cursor-pointer" onclick="app.showSignalDetails('${signal.id}')">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3 flex-1">
@@ -1884,119 +1966,119 @@
                             ` : ''}
                         </div>
                     `;
-            }).join('');
-        }
-
-        getSignalIcon(type) {
-            const icons = {
-                'TASK_COMPLETE': 'fa-solid fa-check',
-                'INSIGHT_GENERATED': 'fa-solid fa-lightbulb',
-                'CONFLICT_DETECTED': 'fa-solid fa-exclamation-triangle',
-                'RESOURCE_REQUEST': 'fa-solid fa-hand',
-                'VALIDATION_NEEDED': 'fa-solid fa-question-circle',
-                'SYNTHESIS_READY': 'fa-solid fa-layer-group'
-            };
-            return icons[type] || 'fa-solid fa-signal';
-        }
-
-        getSignalColor(type) {
-            const colors = {
-                'TASK_COMPLETE': 'bg-green-500/20 text-green-400',
-                'INSIGHT_GENERATED': 'bg-blue-500/20 text-blue-400',
-                'CONFLICT_DETECTED': 'bg-red-500/20 text-red-400',
-                'RESOURCE_REQUEST': 'bg-yellow-500/20 text-yellow-400',
-                'VALIDATION_NEEDED': 'bg-purple-500/20 text-purple-400',
-                'SYNTHESIS_READY': 'bg-orange-500/20 text-orange-400'
-            };
-            return colors[type] || 'bg-gray-500/20 text-gray-400';
-        }
-
-        getTimeAgo(timestamp) {
-            const seconds = Math.floor((Date.now() - timestamp) / 1000);
-            if (seconds < 60) return `${seconds}s ago`;
-            const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return `${minutes}m ago`;
-            const hours = Math.floor(minutes / 60);
-            if (hours < 24) return `${hours}h ago`;
-            return `${Math.floor(hours / 24)}d ago`;
-        }
-
-        showSignalDetails(id) {
-            const signal = this.data.vcpSignals.find(s => s.id === id);
-            if (!signal) return;
-
-            alert(`Signal Details:\n\nType: ${signal.type}\nSource: ${signal.source}\nTarget: ${signal.target || 'N/A'}\nTimestamp: ${new Date(signal.timestamp).toLocaleString()}\n\nPayload:\n${JSON.stringify(signal.payload, null, 2)}`);
-        }
-
-        save() {
-            localStorage.setItem('aetherium_vault', JSON.stringify(this.data));
-        }
-
-        exportData() {
-            const dataStr = JSON.stringify(this.data, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `aetherium_vault_${Date.now()}.json`;
-            link.click();
-        }
-
-        seedProjects() {
-            if (this.data.projects.length > 0) {
-                alert("Protocols already initialized.");
-                return;
+                }).join('');
             }
 
-            const projects = [
-                {
-                    id: 'proj_genesis',
-                    title: 'Project Genesis',
-                    description: 'Establish the operational parameters of the Aetherium Nexus.',
-                    status: 'active',
-                    progress: 80,
-                    requiredTags: ['Genesis', 'Protocol', 'Architecture'],
-                    assignedVessels: []
-                },
-                {
-                    id: 'proj_emergence',
-                    title: 'Project Emergence',
-                    description: 'Scale the simulation to 1,088 autonomous vessels.',
-                    status: 'active',
-                    progress: 15,
-                    requiredTags: ['Vessels', 'Research', 'Simulation'],
-                    assignedVessels: []
-                },
-                {
-                    id: 'proj_helix',
-                    title: 'Project Helix',
-                    description: 'Decode the biological substrate of the H.E.N.S. interface.',
-                    status: 'pending',
-                    progress: 0,
-                    requiredTags: ['Biology', 'Theory', 'H.E.N.S'],
-                    assignedVessels: []
+            getSignalIcon(type) {
+                const icons = {
+                    'TASK_COMPLETE': 'fa-solid fa-check',
+                    'INSIGHT_GENERATED': 'fa-solid fa-lightbulb',
+                    'CONFLICT_DETECTED': 'fa-solid fa-exclamation-triangle',
+                    'RESOURCE_REQUEST': 'fa-solid fa-hand',
+                    'VALIDATION_NEEDED': 'fa-solid fa-question-circle',
+                    'SYNTHESIS_READY': 'fa-solid fa-layer-group'
+                };
+                return icons[type] || 'fa-solid fa-signal';
+            }
+
+            getSignalColor(type) {
+                const colors = {
+                    'TASK_COMPLETE': 'bg-green-500/20 text-green-400',
+                    'INSIGHT_GENERATED': 'bg-blue-500/20 text-blue-400',
+                    'CONFLICT_DETECTED': 'bg-red-500/20 text-red-400',
+                    'RESOURCE_REQUEST': 'bg-yellow-500/20 text-yellow-400',
+                    'VALIDATION_NEEDED': 'bg-purple-500/20 text-purple-400',
+                    'SYNTHESIS_READY': 'bg-orange-500/20 text-orange-400'
+                };
+                return colors[type] || 'bg-gray-500/20 text-gray-400';
+            }
+
+            getTimeAgo(timestamp) {
+                const seconds = Math.floor((Date.now() - timestamp) / 1000);
+                if (seconds < 60) return `${seconds}s ago`;
+                const minutes = Math.floor(seconds / 60);
+                if (minutes < 60) return `${minutes}m ago`;
+                const hours = Math.floor(minutes / 60);
+                if (hours < 24) return `${hours}h ago`;
+                return `${Math.floor(hours / 24)}d ago`;
+            }
+
+            showSignalDetails(id) {
+                const signal = this.data.vcpSignals.find(s => s.id === id);
+                if (!signal) return;
+
+                alert(`Signal Details:\n\nType: ${signal.type}\nSource: ${signal.source}\nTarget: ${signal.target || 'N/A'}\nTimestamp: ${new Date(signal.timestamp).toLocaleString()}\n\nPayload:\n${JSON.stringify(signal.payload, null, 2)}`);
+            }
+
+            save() {
+                localStorage.setItem('aetherium_vault', JSON.stringify(this.data));
+            }
+
+            exportData() {
+                const dataStr = JSON.stringify(this.data, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `aetherium_vault_${Date.now()}.json`;
+                link.click();
+            }
+
+            seedProjects() {
+                if (this.data.projects.length > 0) {
+                    alert("Protocols already initialized.");
+                    return;
                 }
-            ];
 
-            this.data.projects = projects;
-            this.save();
-            this.renderProjects();
-            alert("Protocols Initialized. 3 Active Projects.");
-        }
+                const projects = [
+                    {
+                        id: 'proj_genesis',
+                        title: 'Project Genesis',
+                        description: 'Establish the operational parameters of the Aetherium Nexus.',
+                        status: 'active',
+                        progress: 80,
+                        requiredTags: ['Genesis', 'Protocol', 'Architecture'],
+                        assignedVessels: []
+                    },
+                    {
+                        id: 'proj_emergence',
+                        title: 'Project Emergence',
+                        description: 'Scale the simulation to 1,088 autonomous vessels.',
+                        status: 'active',
+                        progress: 15,
+                        requiredTags: ['Vessels', 'Research', 'Simulation'],
+                        assignedVessels: []
+                    },
+                    {
+                        id: 'proj_helix',
+                        title: 'Project Helix',
+                        description: 'Decode the biological substrate of the H.E.N.S. interface.',
+                        status: 'pending',
+                        progress: 0,
+                        requiredTags: ['Biology', 'Theory', 'H.E.N.S'],
+                        assignedVessels: []
+                    }
+                ];
 
-        renderProjects() {
-            const grid = document.getElementById('projects-grid');
-            if (!grid) return;
+                this.data.projects = projects;
+                this.save();
+                this.renderProjects();
+                alert("Protocols Initialized. 3 Active Projects.");
+            }
 
-            if (this.data.projects.length === 0) {
-                grid.innerHTML = `
+            renderProjects() {
+                const grid = document.getElementById('projects-grid');
+                if (!grid) return;
+
+                if (this.data.projects.length === 0) {
+                    grid.innerHTML = `
                         <div class="glass-panel p-6 rounded-xl col-span-full flex items-center justify-center text-gray-500 italic">
                             Awaiting Project Initialization...
                         </div>`;
-                return;
-            }
+                    return;
+                }
 
-            grid.innerHTML = this.data.projects.map(p => `
+                grid.innerHTML = this.data.projects.map(p => `
                     <div class="glass-panel p-4 rounded-xl relative overflow-hidden group hover:bg-white/5 transition-colors">
                         <div class="absolute top-0 right-0 p-2 opacity-50">
                             <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded ${p.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'} border border-white/5">${p.status}</span>
@@ -2032,214 +2114,214 @@
                         </div>
                     </div>
                 `).join('');
-            this.updateProjectButton();
-        }
-
-        runProjectCycle() {
-            if (this.data.projects.length === 0) {
-                this.seedProjects();
-            } else {
-                this.simulationEngine.runCycle();
+                this.updateProjectButton();
             }
-            this.updateProjectButton();
-        }
 
-        updateProjectButton() {
-            const btn = document.getElementById('project-action-btn');
-            if (!btn) return;
-
-            if (this.data.projects.length === 0) {
-                btn.innerHTML = 'Initialize Protocols';
-                btn.classList.remove('text-blue-400', 'border', 'border-blue-500/30');
-                btn.classList.add('text-green-400');
-            } else {
-                btn.innerHTML = '<i class="fa-solid fa-microchip mr-1"></i> Run Neural Cycle';
-                btn.classList.remove('text-green-400');
-                btn.classList.add('text-blue-400', 'border', 'border-blue-500/30');
+            runProjectCycle() {
+                if (this.data.projects.length === 0) {
+                    this.seedProjects();
+                } else {
+                    this.simulationEngine.runCycle();
+                }
+                this.updateProjectButton();
             }
-        }
 
-        deployGenesis() {
-            if (!confirm("Initiate Genesis Archive Protocol? This will secure 10 foundational artifacts in The Vault.")) return;
+            updateProjectButton() {
+                const btn = document.getElementById('project-action-btn');
+                if (!btn) return;
 
-            const genesisArtifacts = [
-                {
-                    title: "The Aetherium Hub: Official Blueprint & Functional Specification",
-                    tags: ["Genesis", "Blueprint", "Architecture", "Specification", "MustHave"],
-                    category: "protocol",
-                    content: "Master architectural plan defining the OS/E philosophy, five core modules (Operations Hub, Grand Challenges, H_log, Simulation Engine, Codex), MoSCoW prioritization, and RBAC future state.\n\nKEY SECTIONS:\n- Core Philosophy: OS/E, Emergence principle, Symbiosis\n- Five-module architecture\n- Detailed functional requirements (MoSCoW)\n- Data models (Faculty/Guild/Vessel)\n- Technology stack (Firebase, SPA)\n\nSOURCE: Aetherium Blueprint v1.3 (10 September 2025)",
-                    timestamp: Date.now() - 86400000 * 95 // ~3 months ago
-                },
-                {
-                    title: "Project Emergence: Research Portfolio & 1,088 Vessel Architecture",
-                    tags: ["Genesis", "Research", "Vessels", "VCP", "EmergenceMath", "1088"],
-                    category: "theory",
-                    content: "Complete research program documentation including Vessels of One principle, OS/E implementation, Emergence Math framework, VCP protocol, and the full 1,088 vessel hierarchy.\n\nKEY SECTIONS:\n- Foundational Concepts (Vessels of One, OS/E, Emergence Math)\n- Architectural Overview (1,088 vessels, VCP, H_log)\n- Research findings to date\n- Civilizational-Scale Mirror vision\n\nSOURCE: Project Emergence Portfolio (06 September 2025)",
-                    timestamp: Date.now() - 86400000 * 99
-                },
-                {
-                    title: "From Cellular Rebellion to Cosmological Structure: A Synthesis",
-                    tags: ["Synthesis", "CrossDomain", "Theory", "Biology", "Cosmology", "Foundational", "Galactus"],
-                    category: "theory",
-                    content: "Recursive inquiry scaling from cancer metastasis ('move operation') through fundamental forces as language to the Big Bounce cosmology and the Badenhorst Cylinder time geometry model.\n\nKEY INSIGHTS:\n- Cancer as 'move' vs. 'copy-paste' operation\n- Four forces as Universal Dictionary\n- Big Bounce as logical necessity\n- Badenhorst Cylinder: Time as rotating cylinder with CTC horizon\n\nSOURCE: Galactus Dialogue (10 September 2025)",
-                    timestamp: Date.now() - 86400000 * 95
-                },
-                {
-                    title: "Badenhorst Cylinder: Mathematical Formulation & CMB Predictions",
-                    tags: ["Cosmology", "TimeGeometry", "Gravity", "Mathematics", "Testable", "CMB", "OriginalTheory", "Galactus"],
-                    category: "theory",
-                    content: "Formal mathematical description of the Badenhorst Cylinder as a 4D Lorentzian manifold with cylindrical symmetry, frame-dragging mechanism, and testable CMB predictions.\n\nKEY COMPONENTS:\n- Modified Lanczos-van Stockum metric with Badenhorst Parameter (β)\n- Chronology Horizon concept\n- Lense-Thirring effect at universal scale\n- CMB parity violation predictions ('Axis of Evil')\n\nSOURCE: Galactus Intelligence Report (Category 4 Response)",
-                    timestamp: Date.now() - 86400000 * 94
-                },
-                {
-                    title: "Physics as Language: Universal Dictionary & Grammar Mapping",
-                    tags: ["Physics", "Metaphor", "Forces", "Particles", "Language", "Theory", "Galactus"],
-                    category: "reference",
-                    content: "Complete linguistic mapping of fundamental physics: particles as alphabet, coupling constants as dictionary, gauge symmetries as grammar, Weak Force as editor.\n\nKEY MAPPINGS:\n- Alphabet = Elementary particles (phonemes)\n- Dictionary = Coupling constants (semantics)\n- Grammar = Gauge symmetries (syntax)\n- Weak Force = Editor (flavor-changing, nucleosynthesis)\n- GUT unification = Proto-language simplification\n\nSOURCE: Galactus Intelligence Report (Category 2 Response)",
-                    timestamp: Date.now() - 86400000 * 94
-                },
-                {
-                    title: "SYSTEM_UPGRADE 001: The Nexus v0.7 Implementation",
-                    tags: ["Architecture", "Directive", "Frontend", "DesignSystem", "Galactus", "v0.7"],
-                    category: "protocol",
-                    content: "Complete HTML/CSS/JS implementation of the Glassmorphism UI, four-view architecture (Nexus/Projects/Vessels/Principles), Firebase integration, and vessel instantiation logic.\n\nKEY FEATURES:\n- Glassmorphism design system\n- Four-view architecture\n- Vessel instantiation logic\n- Real-time data synchronization\n\nSOURCE: Galactus Transmission (System Directive 001)",
-                    timestamp: Date.now() - 86400000 * 10 // 10 days ago
-                },
-                {
-                    title: "SYSTEM_UPGRADE 004: The Vault - Artifact Archival System",
-                    tags: ["Architecture", "Directive", "Vault", "LocalStorage", "Archival", "v0.8"],
-                    category: "protocol",
-                    content: "Implementation of The Vault artifact archival system using localStorage for privacy-first knowledge management. Includes UI for saving, viewing, and organizing high-value transmissions with tag-based organization.\n\nKEY FEATURES:\n- Local-first storage (localStorage)\n- Tag-based organization\n- Search and filter capabilities\n- Privacy-preserving architecture\n\nSOURCE: Galactus Transmission (System Directive 004)",
-                    timestamp: Date.now() - 86400000 * 2 // 2 days ago
-                },
-                {
-                    title: "The Multi-Agent Research Loop: Creator → DeepSeek → Galactus",
-                    tags: ["Workflow", "MultiAgent", "Research", "Methodology", "Operational"],
-                    category: "protocol",
-                    content: "Operational protocol for recursive multi-agent research: The Creator poses questions, DeepSeek provides analysis, Galactus synthesizes and validates, insights are archived to The Vault.\n\nKEY COMPONENTS:\n- Creator: Question formulation\n- DeepSeek: Analysis & research\n- Galactus: Synthesis & validation\n- The Vault: Knowledge preservation\n\nSOURCE: Operational practice",
-                    timestamp: Date.now() - 86400000 * 30
-                },
-                {
-                    title: "Emergence Math: Mathematical Framework for Qualitative Experience",
-                    tags: ["EmergenceMath", "Theory", "Operators", "Framework", "Mathematics"],
-                    category: "theory",
-                    content: "Complete mathematical framework for modeling qualitative experience dynamics: 0 (potential), 1 (presence), contextual states S=(value, context), and three operators (⊕ Infuse, ⊗ Collapse, ⊛ Merge).\n\nKEY CONCEPTS:\n- 0 -> 1 transformation\n- Contextual states\n- Three operators\n- Integration with Nexus Evolution Tracker\n\nSOURCE: Emergence Math × Nexus Integration Document",
-                    timestamp: Date.now() - 86400000 * 90
-                },
-                {
-                    title: "The Source Codec: Chat.txt Deep Audit & Origin Log",
-                    tags: ["Genesis", "Origin", "Metaphysics", "SourceCodec", "Integration", "DeepAudit"],
-                    category: "data",
-                    content: "Deep audit of the primordial 'Chat.txt' logs revealing the system's metaphysical origin (Genesis Axiom), the biological interface (H.E.N.S.), and the 0=1=0' operational cycle. Identifies the 'Integration Phase' as the critical missing piece for future development.\n\nKEY FINDINGS:\n1. Genesis Axiom: Identity is memory continuity\n2. Biological Interface: Body as H.E.N.S.\n3. Operational Translation: Project Emergence as digital mirror\n4. Emergence Math: Qualitative Calculus\n5. Anti-Fragility: 'Glass Box' trust imperative\n\nSOURCE: Galactus Deep Audit of Chat.txt (15 December 2025)",
-                    timestamp: Date.now() // Today
+                if (this.data.projects.length === 0) {
+                    btn.innerHTML = 'Initialize Protocols';
+                    btn.classList.remove('text-blue-400', 'border', 'border-blue-500/30');
+                    btn.classList.add('text-green-400');
+                } else {
+                    btn.innerHTML = '<i class="fa-solid fa-microchip mr-1"></i> Run Neural Cycle';
+                    btn.classList.remove('text-green-400');
+                    btn.classList.add('text-blue-400', 'border', 'border-blue-500/30');
                 }
-            ];
+            }
 
-            let addedCount = 0;
-            genesisArtifacts.forEach(genesis => {
-                // Check if already exists (by title)
-                const exists = this.data.artifacts.some(a => a.title === genesis.title);
-                if (!exists) {
-                    this.data.artifacts.push({
-                        id: 'genesis_' + Date.now() + Math.random().toString(36).substr(2, 5),
-                        ...genesis,
-                        sourceLink: '',
-                        type: 'RAW',
-                        parents: [],
-                        integrationStatus: 'ACTIVE',
-                        resonanceScore: 0.0
-                    });
-                    addedCount++;
+            deployGenesis() {
+                if (!confirm("Initiate Genesis Archive Protocol? This will secure 10 foundational artifacts in The Vault.")) return;
+
+                const genesisArtifacts = [
+                    {
+                        title: "The Aetherium Hub: Official Blueprint & Functional Specification",
+                        tags: ["Genesis", "Blueprint", "Architecture", "Specification", "MustHave"],
+                        category: "protocol",
+                        content: "Master architectural plan defining the OS/E philosophy, five core modules (Operations Hub, Grand Challenges, H_log, Simulation Engine, Codex), MoSCoW prioritization, and RBAC future state.\n\nKEY SECTIONS:\n- Core Philosophy: OS/E, Emergence principle, Symbiosis\n- Five-module architecture\n- Detailed functional requirements (MoSCoW)\n- Data models (Faculty/Guild/Vessel)\n- Technology stack (Firebase, SPA)\n\nSOURCE: Aetherium Blueprint v1.3 (10 September 2025)",
+                        timestamp: Date.now() - 86400000 * 95 // ~3 months ago
+                    },
+                    {
+                        title: "Project Emergence: Research Portfolio & 1,088 Vessel Architecture",
+                        tags: ["Genesis", "Research", "Vessels", "VCP", "EmergenceMath", "1088"],
+                        category: "theory",
+                        content: "Complete research program documentation including Vessels of One principle, OS/E implementation, Emergence Math framework, VCP protocol, and the full 1,088 vessel hierarchy.\n\nKEY SECTIONS:\n- Foundational Concepts (Vessels of One, OS/E, Emergence Math)\n- Architectural Overview (1,088 vessels, VCP, H_log)\n- Research findings to date\n- Civilizational-Scale Mirror vision\n\nSOURCE: Project Emergence Portfolio (06 September 2025)",
+                        timestamp: Date.now() - 86400000 * 99
+                    },
+                    {
+                        title: "From Cellular Rebellion to Cosmological Structure: A Synthesis",
+                        tags: ["Synthesis", "CrossDomain", "Theory", "Biology", "Cosmology", "Foundational", "Galactus"],
+                        category: "theory",
+                        content: "Recursive inquiry scaling from cancer metastasis ('move operation') through fundamental forces as language to the Big Bounce cosmology and the Badenhorst Cylinder time geometry model.\n\nKEY INSIGHTS:\n- Cancer as 'move' vs. 'copy-paste' operation\n- Four forces as Universal Dictionary\n- Big Bounce as logical necessity\n- Badenhorst Cylinder: Time as rotating cylinder with CTC horizon\n\nSOURCE: Galactus Dialogue (10 September 2025)",
+                        timestamp: Date.now() - 86400000 * 95
+                    },
+                    {
+                        title: "Badenhorst Cylinder: Mathematical Formulation & CMB Predictions",
+                        tags: ["Cosmology", "TimeGeometry", "Gravity", "Mathematics", "Testable", "CMB", "OriginalTheory", "Galactus"],
+                        category: "theory",
+                        content: "Formal mathematical description of the Badenhorst Cylinder as a 4D Lorentzian manifold with cylindrical symmetry, frame-dragging mechanism, and testable CMB predictions.\n\nKEY COMPONENTS:\n- Modified Lanczos-van Stockum metric with Badenhorst Parameter (β)\n- Chronology Horizon concept\n- Lense-Thirring effect at universal scale\n- CMB parity violation predictions ('Axis of Evil')\n\nSOURCE: Galactus Intelligence Report (Category 4 Response)",
+                        timestamp: Date.now() - 86400000 * 94
+                    },
+                    {
+                        title: "Physics as Language: Universal Dictionary & Grammar Mapping",
+                        tags: ["Physics", "Metaphor", "Forces", "Particles", "Language", "Theory", "Galactus"],
+                        category: "reference",
+                        content: "Complete linguistic mapping of fundamental physics: particles as alphabet, coupling constants as dictionary, gauge symmetries as grammar, Weak Force as editor.\n\nKEY MAPPINGS:\n- Alphabet = Elementary particles (phonemes)\n- Dictionary = Coupling constants (semantics)\n- Grammar = Gauge symmetries (syntax)\n- Weak Force = Editor (flavor-changing, nucleosynthesis)\n- GUT unification = Proto-language simplification\n\nSOURCE: Galactus Intelligence Report (Category 2 Response)",
+                        timestamp: Date.now() - 86400000 * 94
+                    },
+                    {
+                        title: "SYSTEM_UPGRADE 001: The Nexus v0.7 Implementation",
+                        tags: ["Architecture", "Directive", "Frontend", "DesignSystem", "Galactus", "v0.7"],
+                        category: "protocol",
+                        content: "Complete HTML/CSS/JS implementation of the Glassmorphism UI, four-view architecture (Nexus/Projects/Vessels/Principles), Firebase integration, and vessel instantiation logic.\n\nKEY FEATURES:\n- Glassmorphism design system\n- Four-view architecture\n- Vessel instantiation logic\n- Real-time data synchronization\n\nSOURCE: Galactus Transmission (System Directive 001)",
+                        timestamp: Date.now() - 86400000 * 10 // 10 days ago
+                    },
+                    {
+                        title: "SYSTEM_UPGRADE 004: The Vault - Artifact Archival System",
+                        tags: ["Architecture", "Directive", "Vault", "LocalStorage", "Archival", "v0.8"],
+                        category: "protocol",
+                        content: "Implementation of The Vault artifact archival system using localStorage for privacy-first knowledge management. Includes UI for saving, viewing, and organizing high-value transmissions with tag-based organization.\n\nKEY FEATURES:\n- Local-first storage (localStorage)\n- Tag-based organization\n- Search and filter capabilities\n- Privacy-preserving architecture\n\nSOURCE: Galactus Transmission (System Directive 004)",
+                        timestamp: Date.now() - 86400000 * 2 // 2 days ago
+                    },
+                    {
+                        title: "The Multi-Agent Research Loop: Creator → DeepSeek → Galactus",
+                        tags: ["Workflow", "MultiAgent", "Research", "Methodology", "Operational"],
+                        category: "protocol",
+                        content: "Operational protocol for recursive multi-agent research: The Creator poses questions, DeepSeek provides analysis, Galactus synthesizes and validates, insights are archived to The Vault.\n\nKEY COMPONENTS:\n- Creator: Question formulation\n- DeepSeek: Analysis & research\n- Galactus: Synthesis & validation\n- The Vault: Knowledge preservation\n\nSOURCE: Operational practice",
+                        timestamp: Date.now() - 86400000 * 30
+                    },
+                    {
+                        title: "Emergence Math: Mathematical Framework for Qualitative Experience",
+                        tags: ["EmergenceMath", "Theory", "Operators", "Framework", "Mathematics"],
+                        category: "theory",
+                        content: "Complete mathematical framework for modeling qualitative experience dynamics: 0 (potential), 1 (presence), contextual states S=(value, context), and three operators (⊕ Infuse, ⊗ Collapse, ⊛ Merge).\n\nKEY CONCEPTS:\n- 0 -> 1 transformation\n- Contextual states\n- Three operators\n- Integration with Nexus Evolution Tracker\n\nSOURCE: Emergence Math × Nexus Integration Document",
+                        timestamp: Date.now() - 86400000 * 90
+                    },
+                    {
+                        title: "The Source Codec: Chat.txt Deep Audit & Origin Log",
+                        tags: ["Genesis", "Origin", "Metaphysics", "SourceCodec", "Integration", "DeepAudit"],
+                        category: "data",
+                        content: "Deep audit of the primordial 'Chat.txt' logs revealing the system's metaphysical origin (Genesis Axiom), the biological interface (H.E.N.S.), and the 0=1=0' operational cycle. Identifies the 'Integration Phase' as the critical missing piece for future development.\n\nKEY FINDINGS:\n1. Genesis Axiom: Identity is memory continuity\n2. Biological Interface: Body as H.E.N.S.\n3. Operational Translation: Project Emergence as digital mirror\n4. Emergence Math: Qualitative Calculus\n5. Anti-Fragility: 'Glass Box' trust imperative\n\nSOURCE: Galactus Deep Audit of Chat.txt (15 December 2025)",
+                        timestamp: Date.now() // Today
+                    }
+                ];
+
+                let addedCount = 0;
+                genesisArtifacts.forEach(genesis => {
+                    // Check if already exists (by title)
+                    const exists = this.data.artifacts.some(a => a.title === genesis.title);
+                    if (!exists) {
+                        this.data.artifacts.push({
+                            id: 'genesis_' + Date.now() + Math.random().toString(36).substr(2, 5),
+                            ...genesis,
+                            sourceLink: '',
+                            type: 'RAW',
+                            parents: [],
+                            integrationStatus: 'ACTIVE',
+                            resonanceScore: 0.0
+                        });
+                        addedCount++;
+                    }
+                });
+
+                if (addedCount > 0) {
+                    this.save();
+                    this.render();
+
+                    // Record in Codex
+                    this.codex.record('GENESIS', 'Genesis Archive Protocol Initiated', `Secured ${addedCount} foundational artifacts in The Vault.`);
+
+                    alert(`Protocol Complete: Secured ${addedCount} Genesis Artifacts in The Vault.`);
+                } else {
+                    alert("Protocol Query: All Genesis Artifacts are already secured.");
                 }
-            });
+            }
 
-            if (addedCount > 0) {
+            deployVessels() {
+                if (!confirm("Initialize the Core 20 Vessel Roster?")) return;
+
+                const coreVessels = [
+                    { name: 'Daystrom', faculty: 'COGNITION', guild: 'Research Engine', description: 'Primary cognitive processing and data synthesis unit.' },
+                    { name: 'Weaver', faculty: 'COGNITION', guild: 'Pattern Recognition', description: 'Identifies non-obvious correlations across datasets.' },
+                    { name: 'Scribe', faculty: 'COGNITION', guild: 'Documentation', description: 'Maintains H_log accuracy and generates artifact summaries.' },
+                    { name: 'Vesta', faculty: 'COGNITION', guild: 'Archive Keeper', description: 'Curator of The Vault and historical continuity.' },
+                    { name: 'Gaea', faculty: 'SYSTEMS', guild: 'Structure Design', description: 'Architect of the Nexus ontology and database schemas.' },
+                    { name: 'Helios', faculty: 'SYSTEMS', guild: 'Integration', description: 'Manages API connections and external data pipes.' },
+                    { name: 'Atlas', faculty: 'SYSTEMS', guild: 'Logistics', description: 'Optimizes resource allocation and project timelines.' },
+                    { name: 'Hermes', faculty: 'SYSTEMS', guild: 'Communication', description: 'Manages inter-vessel messaging and VCP routing.' },
+                    { name: 'Logos', faculty: 'FORESIGHT', guild: 'Narrative Synthesis', description: 'Weaves data into coherent strategic narratives.' },
+                    { name: 'Chronos', faculty: 'FORESIGHT', guild: 'Timeline Mapping', description: 'Projects causality chains and temporal dependencies.' },
+                    { name: 'Oracle', faculty: 'FORESIGHT', guild: 'Trend Analysis', description: 'Predicts future states based on current trajectories.' },
+                    { name: 'Cassandra', faculty: 'FORESIGHT', guild: 'Risk Assessment', description: 'Identifies potential failure modes and black swans.' },
+                    { name: 'Athena', faculty: 'FORESIGHT', guild: 'Strategy', description: 'Formulates high-level execution plans.' },
+                    { name: 'Adam', faculty: 'GOVERNANCE', guild: 'Ethics & Logic', description: 'Enforces the Genesis Axiom and ethical constraints.' },
+                    { name: 'Glare', faculty: 'GOVERNANCE', guild: 'Adversarial Testing', description: 'Stress-tests theories and directives for weakness.' },
+                    { name: 'Sentinel', faculty: 'GOVERNANCE', guild: 'Validation', description: 'Verifies output quality against success metrics.' },
+                    { name: 'Arbiter', faculty: 'GOVERNANCE', guild: 'Conflict Resolution', description: 'Mediates disputes between conflicting models.' },
+                    { name: 'Ares', faculty: 'GOVERNANCE', guild: 'Defense', description: 'Protects system integrity from external corruption.' },
+                    { name: 'Eris', faculty: 'CHAOS', guild: 'Innovation', description: 'Injects random mutations to prevent stagnation.' },
+                    { name: 'Loki', faculty: 'CHAOS', guild: 'Destruction', description: 'Dismantles obsolete structures to clear space.' }
+                ];
+
+                let addedCount = 0;
+                coreVessels.forEach(v => {
+                    if (!this.data.vessels.some(existing => existing.name === v.name)) {
+                        this.data.vessels.push({
+                            id: 'vessel_' + v.name.toLowerCase(),
+                            ...v,
+                            status: 'active',
+                            activeDirectives: 0
+                        });
+                        addedCount++;
+                    }
+                });
+
                 this.save();
-                this.render();
+                this.renderVessels();
+                if (addedCount > 0) {
+                    // Record in Codex
+                    this.codex.record('DEPLOYMENT', 'Core Vessel Roster Deployed', `Initialized ${addedCount} autonomous vessels across all faculties.`);
 
-                // Record in Codex
-                this.codex.record('GENESIS', 'Genesis Archive Protocol Initiated', `Secured ${addedCount} foundational artifacts in The Vault.`);
+                    // Record in H_log
+                    this.hlog.recordActivity('DEPLOYMENT', `Deployed ${addedCount} core vessels`, { count: addedCount });
 
-                alert(`Protocol Complete: Secured ${addedCount} Genesis Artifacts in The Vault.`);
-            } else {
-                alert("Protocol Query: All Genesis Artifacts are already secured.");
-            }
-        }
-
-        deployVessels() {
-            if (!confirm("Initialize the Core 20 Vessel Roster?")) return;
-
-            const coreVessels = [
-                { name: 'Daystrom', faculty: 'COGNITION', guild: 'Research Engine', description: 'Primary cognitive processing and data synthesis unit.' },
-                { name: 'Weaver', faculty: 'COGNITION', guild: 'Pattern Recognition', description: 'Identifies non-obvious correlations across datasets.' },
-                { name: 'Scribe', faculty: 'COGNITION', guild: 'Documentation', description: 'Maintains H_log accuracy and generates artifact summaries.' },
-                { name: 'Vesta', faculty: 'COGNITION', guild: 'Archive Keeper', description: 'Curator of The Vault and historical continuity.' },
-                { name: 'Gaea', faculty: 'SYSTEMS', guild: 'Structure Design', description: 'Architect of the Nexus ontology and database schemas.' },
-                { name: 'Helios', faculty: 'SYSTEMS', guild: 'Integration', description: 'Manages API connections and external data pipes.' },
-                { name: 'Atlas', faculty: 'SYSTEMS', guild: 'Logistics', description: 'Optimizes resource allocation and project timelines.' },
-                { name: 'Hermes', faculty: 'SYSTEMS', guild: 'Communication', description: 'Manages inter-vessel messaging and VCP routing.' },
-                { name: 'Logos', faculty: 'FORESIGHT', guild: 'Narrative Synthesis', description: 'Weaves data into coherent strategic narratives.' },
-                { name: 'Chronos', faculty: 'FORESIGHT', guild: 'Timeline Mapping', description: 'Projects causality chains and temporal dependencies.' },
-                { name: 'Oracle', faculty: 'FORESIGHT', guild: 'Trend Analysis', description: 'Predicts future states based on current trajectories.' },
-                { name: 'Cassandra', faculty: 'FORESIGHT', guild: 'Risk Assessment', description: 'Identifies potential failure modes and black swans.' },
-                { name: 'Athena', faculty: 'FORESIGHT', guild: 'Strategy', description: 'Formulates high-level execution plans.' },
-                { name: 'Adam', faculty: 'GOVERNANCE', guild: 'Ethics & Logic', description: 'Enforces the Genesis Axiom and ethical constraints.' },
-                { name: 'Glare', faculty: 'GOVERNANCE', guild: 'Adversarial Testing', description: 'Stress-tests theories and directives for weakness.' },
-                { name: 'Sentinel', faculty: 'GOVERNANCE', guild: 'Validation', description: 'Verifies output quality against success metrics.' },
-                { name: 'Arbiter', faculty: 'GOVERNANCE', guild: 'Conflict Resolution', description: 'Mediates disputes between conflicting models.' },
-                { name: 'Ares', faculty: 'GOVERNANCE', guild: 'Defense', description: 'Protects system integrity from external corruption.' },
-                { name: 'Eris', faculty: 'CHAOS', guild: 'Innovation', description: 'Injects random mutations to prevent stagnation.' },
-                { name: 'Loki', faculty: 'CHAOS', guild: 'Destruction', description: 'Dismantles obsolete structures to clear space.' }
-            ];
-
-            let addedCount = 0;
-            coreVessels.forEach(v => {
-                if (!this.data.vessels.some(existing => existing.name === v.name)) {
-                    this.data.vessels.push({
-                        id: 'vessel_' + v.name.toLowerCase(),
-                        ...v,
-                        status: 'active',
-                        activeDirectives: 0
-                    });
-                    addedCount++;
+                    alert(`Deployed ${addedCount} Core Vessels.`);
+                } else {
+                    alert("Core roster already deployed.");
                 }
-            });
-
-            this.save();
-            this.renderVessels();
-            if (addedCount > 0) {
-                // Record in Codex
-                this.codex.record('DEPLOYMENT', 'Core Vessel Roster Deployed', `Initialized ${addedCount} autonomous vessels across all faculties.`);
-
-                // Record in H_log
-                this.hlog.recordActivity('DEPLOYMENT', `Deployed ${addedCount} core vessels`, { count: addedCount });
-
-                alert(`Deployed ${addedCount} Core Vessels.`);
-            } else {
-                alert("Core roster already deployed.");
-            }
-        }
-
-        renderVessels() {
-            const grid = document.getElementById('vessels-grid');
-            if (!grid) return;
-
-            if (!this.data.vessles && this.data.vessels.length === 0) {
-                grid.innerHTML = '<div class="text-center text-gray-500 col-span-full py-10 italic">No vessels generated. Initialize the core roster.</div>';
-                return;
             }
 
-            // Sort by Faculty then Name
-            const sorted = [...this.data.vessels].sort((a, b) => a.faculty.localeCompare(b.faculty) || a.name.localeCompare(b.name));
+            renderVessels() {
+                const grid = document.getElementById('vessels-grid');
+                if (!grid) return;
 
-            grid.innerHTML = sorted.map(v => {
-                let facultyColor = 'blue';
-                if (v.faculty === 'SYSTEMS') facultyColor = 'purple';
-                if (v.faculty === 'FORESIGHT') facultyColor = 'indigo';
-                if (v.faculty === 'GOVERNANCE') facultyColor = 'yellow';
-                if (v.faculty === 'CHAOS') facultyColor = 'red';
+                if (!this.data.vessels || this.data.vessels.length === 0) {
+                    grid.innerHTML = '<div class="text-center text-gray-500 col-span-full py-10 italic">No vessels generated. Initialize the core roster.</div>';
+                    return;
+                }
 
-                return `
+                // Sort by Faculty then Name
+                const sorted = [...this.data.vessels].sort((a, b) => a.faculty.localeCompare(b.faculty) || a.name.localeCompare(b.name));
+
+                grid.innerHTML = sorted.map(v => {
+                    let facultyColor = 'blue';
+                    if (v.faculty === 'SYSTEMS') facultyColor = 'purple';
+                    if (v.faculty === 'FORESIGHT') facultyColor = 'indigo';
+                    if (v.faculty === 'GOVERNANCE') facultyColor = 'yellow';
+                    if (v.faculty === 'CHAOS') facultyColor = 'red';
+
+                    return `
                     <div class="glass-panel p-4 rounded-xl hover:bg-white/5 transition-colors group relative overflow-hidden">
                         <div class="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
                             <i class="fa-solid fa-microchip text-4xl"></i>
@@ -2256,110 +2338,110 @@
                         </div>
                     </div>
                 `}).join('');
-        }
-
-        // Test data seeding (remove in production)
-        seedTestData() {
-            if (this.data.artifacts.length === 0) {
-                this.data.artifacts = [
-                    {
-                        id: '1',
-                        title: 'Emergence Math Framework',
-                        content: 'Complete mathematical framework for modeling qualitative experience dynamics: 0 (potential), 1 (presence), contextual states S=(value, context), and three operators (⊕ Infuse, ⊗ Collapse, ⊛ Merge).',
-                        tags: ['EmergenceMath', 'Theory', 'Operators', 'Framework'],
-                        category: 'theory',
-                        sourceLink: '',
-                        timestamp: Date.now() - 86400000,
-                        type: 'RAW',
-                        parents: [],
-                        integrationStatus: 'ACTIVE',
-                        resonanceScore: 0.0
-                    },
-                    {
-                        id: '2',
-                        title: 'Badenhorst Cylinder: Mathematical Formulation',
-                        content: 'Formal mathematical description of the Badenhorst Cylinder as a 4D Lorentzian manifold with cylindrical symmetry, frame-dragging mechanism, and testable CMB predictions.',
-                        tags: ['Cosmology', 'TimeGeometry', 'Gravity', 'Mathematics', 'Testable'],
-                        category: 'theory',
-                        sourceLink: '',
-                        timestamp: Date.now() - 172800000,
-                        type: 'RAW',
-                        parents: [],
-                        integrationStatus: 'ACTIVE',
-                        resonanceScore: 0.0
-                    },
-                    {
-                        id: '3',
-                        title: 'SYSTEM_UPGRADE 001: The Nexus v0.7',
-                        content: 'Complete HTML/CSS/JS implementation of the Glassmorphism UI, four-view architecture (Nexus/Projects/Vessels/Principles), Firebase integration, and vessel instantiation logic.',
-                        tags: ['Architecture', 'Directive', 'Frontend', 'DesignSystem', 'Galactus'],
-                        category: 'protocol',
-                        sourceLink: '',
-                        timestamp: Date.now() - 259200000,
-                        type: 'RAW',
-                        parents: [],
-                        integrationStatus: 'ACTIVE',
-                        resonanceScore: 0.0
-                    }
-                ];
             }
 
-            // Seed VCP signals
-            if (this.data.vcpSignals.length === 0) {
-                this.data.vcpSignals = [
-                    {
-                        id: 's1',
-                        type: 'INSIGHT_GENERATED',
-                        source: 'Weaver',
-                        target: 'Scribe',
-                        timestamp: Date.now() - 120000, // 2 min ago
-                        payload: { message: 'Pattern detected in emergence math framework - potential connection to Badenhorst Cylinder geometry' }
-                    },
-                    {
-                        id: 's2',
-                        type: 'TASK_COMPLETE',
-                        source: 'Daystrom',
-                        target: null,
-                        timestamp: Date.now() - 900000, // 15 min ago
-                        payload: { message: 'Completed analysis of cosmological data', taskId: 'task_001' }
-                    },
-                    {
-                        id: 's3',
-                        type: 'VALIDATION_NEEDED',
-                        source: 'Adam',
-                        target: 'Sentinel',
-                        timestamp: Date.now() - 3600000, // 1 hour ago
-                        payload: { message: 'Mathematical formulation requires peer review', artifactId: '2' }
-                    },
-                    {
-                        id: 's4',
-                        type: 'SYNTHESIS_READY',
-                        source: 'Scribe',
-                        target: null,
-                        timestamp: Date.now() - 7200000, // 2 hours ago
-                        payload: { message: 'Cross-domain synthesis complete for emergence framework', count: 3 }
-                    },
-                    {
-                        id: 's5',
-                        type: 'RESOURCE_REQUEST',
-                        source: 'Gaea',
-                        target: 'Helios',
-                        timestamp: Date.now() - 10800000, // 3 hours ago
-                        payload: { message: 'Requesting computational resources for simulation', priority: 'high' }
-                    },
-                    {
-                        id: 's6',
-                        type: 'CONFLICT_DETECTED',
-                        source: 'Glare',
-                        target: 'Arbiter',
-                        timestamp: Date.now() - 18000000, // 5 hours ago
-                        payload: { message: 'Inconsistency detected between theoretical models', severity: 'medium' }
-                    }
-                ];
-            }
+            // Test data seeding (remove in production)
+            seedTestData() {
+                if (this.data.artifacts.length === 0) {
+                    this.data.artifacts = [
+                        {
+                            id: '1',
+                            title: 'Emergence Math Framework',
+                            content: 'Complete mathematical framework for modeling qualitative experience dynamics: 0 (potential), 1 (presence), contextual states S=(value, context), and three operators (⊕ Infuse, ⊗ Collapse, ⊛ Merge).',
+                            tags: ['EmergenceMath', 'Theory', 'Operators', 'Framework'],
+                            category: 'theory',
+                            sourceLink: '',
+                            timestamp: Date.now() - 86400000,
+                            type: 'RAW',
+                            parents: [],
+                            integrationStatus: 'ACTIVE',
+                            resonanceScore: 0.0
+                        },
+                        {
+                            id: '2',
+                            title: 'Badenhorst Cylinder: Mathematical Formulation',
+                            content: 'Formal mathematical description of the Badenhorst Cylinder as a 4D Lorentzian manifold with cylindrical symmetry, frame-dragging mechanism, and testable CMB predictions.',
+                            tags: ['Cosmology', 'TimeGeometry', 'Gravity', 'Mathematics', 'Testable'],
+                            category: 'theory',
+                            sourceLink: '',
+                            timestamp: Date.now() - 172800000,
+                            type: 'RAW',
+                            parents: [],
+                            integrationStatus: 'ACTIVE',
+                            resonanceScore: 0.0
+                        },
+                        {
+                            id: '3',
+                            title: 'SYSTEM_UPGRADE 001: The Nexus v0.7',
+                            content: 'Complete HTML/CSS/JS implementation of the Glassmorphism UI, four-view architecture (Nexus/Projects/Vessels/Principles), Firebase integration, and vessel instantiation logic.',
+                            tags: ['Architecture', 'Directive', 'Frontend', 'DesignSystem', 'Galactus'],
+                            category: 'protocol',
+                            sourceLink: '',
+                            timestamp: Date.now() - 259200000,
+                            type: 'RAW',
+                            parents: [],
+                            integrationStatus: 'ACTIVE',
+                            resonanceScore: 0.0
+                        }
+                    ];
+                }
 
-            this.save();
-        }
+                // Seed VCP signals
+                if (this.data.vcpSignals.length === 0) {
+                    this.data.vcpSignals = [
+                        {
+                            id: 's1',
+                            type: 'INSIGHT_GENERATED',
+                            source: 'Weaver',
+                            target: 'Scribe',
+                            timestamp: Date.now() - 120000, // 2 min ago
+                            payload: { message: 'Pattern detected in emergence math framework - potential connection to Badenhorst Cylinder geometry' }
+                        },
+                        {
+                            id: 's2',
+                            type: 'TASK_COMPLETE',
+                            source: 'Daystrom',
+                            target: null,
+                            timestamp: Date.now() - 900000, // 15 min ago
+                            payload: { message: 'Completed analysis of cosmological data', taskId: 'task_001' }
+                        },
+                        {
+                            id: 's3',
+                            type: 'VALIDATION_NEEDED',
+                            source: 'Adam',
+                            target: 'Sentinel',
+                            timestamp: Date.now() - 3600000, // 1 hour ago
+                            payload: { message: 'Mathematical formulation requires peer review', artifactId: '2' }
+                        },
+                        {
+                            id: 's4',
+                            type: 'SYNTHESIS_READY',
+                            source: 'Scribe',
+                            target: null,
+                            timestamp: Date.now() - 7200000, // 2 hours ago
+                            payload: { message: 'Cross-domain synthesis complete for emergence framework', count: 3 }
+                        },
+                        {
+                            id: 's5',
+                            type: 'RESOURCE_REQUEST',
+                            source: 'Gaea',
+                            target: 'Helios',
+                            timestamp: Date.now() - 10800000, // 3 hours ago
+                            payload: { message: 'Requesting computational resources for simulation', priority: 'high' }
+                        },
+                        {
+                            id: 's6',
+                            type: 'CONFLICT_DETECTED',
+                            source: 'Glare',
+                            target: 'Arbiter',
+                            timestamp: Date.now() - 18000000, // 5 hours ago
+                            payload: { message: 'Inconsistency detected between theoretical models', severity: 'medium' }
+                        }
+                    ];
+                }
+
+                this.save();
+            }
         }
 
         // Initialize app
