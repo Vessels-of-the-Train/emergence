@@ -30,12 +30,12 @@ const DICE_SETUP = [
 ];
 
 const GOD_FAVORS = {
-  thor_strike: { id: "thor_strike", name: "Thor's Strike", priority: 7, desc: "Deal direct damage.", tiers: [{cost: 4, val: 2}, {cost: 8, val: 5}, {cost: 12, val: 8}], effect: (gs, pIdx, tier) => { const targetIdx = 1 - pIdx; gs.players[targetIdx].health -= tier.val; gs.log(`${gs.players[pIdx].name} strikes with Thor's might, dealing ${tier.val} damage!`); } },
-  idun_rejuvenation: { id: "idun_rejuvenation", name: "Idun's Rejuvenation", priority: 7, desc: "Heal yourself.", tiers: [{cost: 4, val: 2}, {cost: 7, val: 4}, {cost: 10, val: 6}], effect: (gs, pIdx, tier) => { gs.players[pIdx].health = Math.min(15, gs.players[pIdx].health + tier.val); gs.log(`${gs.players[pIdx].name} calls upon Idun, healing for ${tier.val} health.`); } },
-  vidar_might: { id: "vidar_might", name: "Vidar's Might", priority: 4, desc: "Remove opponent's Helmets.", tiers: [{cost: 2, val: 2}, {cost: 4, val: 4}, {cost: 6, val: 6}], effect: (gs, pIdx, tier) => { const targetIdx = 1-pIdx; let removed = 0; for(let i=0; i<gs.players[targetIdx].dice.length && removed < tier.val; i++) { if(gs.players[targetIdx].dice[i].face === 'helmet') { gs.players[targetIdx].dice[i].removed = true; removed++; } } gs.log(`${gs.players[pIdx].name} uses Vidar's Might, removing ${removed} Helmets.`); } },
-  baldr_invulnerability: { id: "baldr_invulnerability", name: "Baldr's Invulnerability", priority: 6, desc: "Add Helmet/Shields.", tiers: [{cost: 3, val: 1}, {cost: 6, val: 2}, {cost: 9, val: 3}], effect: (gs, pIdx, tier) => { const p = gs.players[pIdx]; let toAdd = 0; p.dice.forEach(d => { if (d.face === 'helmet' || d.face === 'shield') toAdd += tier.val }); p.bonusDefense += toAdd; gs.log(`${gs.players[pIdx].name} becomes invulnerable, gaining ${toAdd} bonus defense.`); } },
-  ullr_aim: { id: "ullr_aim", name: "Ullr's Aim", priority: 4, desc: "Arrows ignore Shields.", tiers: [{cost: 2, val: 2}, {cost: 3, val: 3}, {cost: 4, val: 6}], effect: (gs, pIdx, tier) => { gs.players[pIdx].ignoreShields = tier.val; gs.log(`${gs.players[pIdx].name} takes Ullr's Aim, making arrows pierce shields.`); } },
-  heimdall_watch: { id: "heimdall_watch", name: "Heimdall's Watch", priority: 7, desc: "Heal per blocked attack.", tiers: [{cost: 4, val: 1}, {cost: 7, val: 2}, {cost: 10, val: 3}], effect: (gs, pIdx, tier) => { gs.players[pIdx].healOnBlock = tier.val; gs.log(`${gs.players[pIdx].name} is under Heimdall's Watch.`); } },
+  thor_strike: { id: "thor_strike", name: "Thor's Strike", priority: 7, desc: "Deal direct damage.", tiers: [{ cost: 4, val: 2 }, { cost: 8, val: 5 }, { cost: 12, val: 8 }], effect: (gs, pIdx, tier) => { const targetIdx = 1 - pIdx; gs.players[targetIdx].health -= tier.val; gs.log(`${gs.players[pIdx].name} strikes with Thor's might, dealing ${tier.val} damage!`); } },
+  idun_rejuvenation: { id: "idun_rejuvenation", name: "Idun's Rejuvenation", priority: 7, desc: "Heal yourself.", tiers: [{ cost: 4, val: 2 }, { cost: 7, val: 4 }, { cost: 10, val: 6 }], effect: (gs, pIdx, tier) => { gs.players[pIdx].health = Math.min(15, gs.players[pIdx].health + tier.val); gs.log(`${gs.players[pIdx].name} calls upon Idun, healing for ${tier.val} health.`); } },
+  vidar_might: { id: "vidar_might", name: "Vidar's Might", priority: 4, desc: "Remove opponent's Helmets.", tiers: [{ cost: 2, val: 2 }, { cost: 4, val: 4 }, { cost: 6, val: 6 }], effect: (gs, pIdx, tier) => { const targetIdx = 1 - pIdx; let removed = 0; for (let i = 0; i < gs.players[targetIdx].dice.length && removed < tier.val; i++) { if (gs.players[targetIdx].dice[i].face === 'helmet') { gs.players[targetIdx].dice[i].removed = true; removed++; } } gs.log(`${gs.players[pIdx].name} uses Vidar's Might, removing ${removed} Helmets.`); } },
+  baldr_invulnerability: { id: "baldr_invulnerability", name: "Baldr's Invulnerability", priority: 6, desc: "Add Helmet/Shields.", tiers: [{ cost: 3, val: 1 }, { cost: 6, val: 2 }, { cost: 9, val: 3 }], effect: (gs, pIdx, tier) => { const p = gs.players[pIdx]; let toAdd = 0; p.dice.forEach(d => { if (d.face === 'helmet' || d.face === 'shield') toAdd += tier.val }); p.bonusDefense += toAdd; gs.log(`${gs.players[pIdx].name} becomes invulnerable, gaining ${toAdd} bonus defense.`); } },
+  ullr_aim: { id: "ullr_aim", name: "Ullr's Aim", priority: 4, desc: "Arrows ignore Shields.", tiers: [{ cost: 2, val: 2 }, { cost: 3, val: 3 }, { cost: 4, val: 6 }], effect: (gs, pIdx, tier) => { gs.players[pIdx].ignoreShields = tier.val; gs.log(`${gs.players[pIdx].name} takes Ullr's Aim, making arrows pierce shields.`); } },
+  heimdall_watch: { id: "heimdall_watch", name: "Heimdall's Watch", priority: 7, desc: "Heal per blocked attack.", tiers: [{ cost: 4, val: 1 }, { cost: 7, val: 2 }, { cost: 10, val: 3 }], effect: (gs, pIdx, tier) => { gs.players[pIdx].healOnBlock = tier.val; gs.log(`${gs.players[pIdx].name} is under Heimdall's Watch.`); } },
 };
 
 const OrlogGame: React.FC = () => {
@@ -48,9 +48,9 @@ const OrlogGame: React.FC = () => {
   // Initialize game state
   const initGame = () => {
     const allFavors = Object.values(GOD_FAVORS);
-    const player0Favors = [];
-    const player1Favors = [];
-    
+    const player0Favors: any[] = [];
+    const player1Favors: any[] = [];
+
     for (let i = 0; i < 3; i++) {
       player0Favors.push(allFavors.splice(Math.floor(Math.random() * allFavors.length), 1)[0]);
       player1Favors.push(allFavors.splice(Math.floor(Math.random() * allFavors.length), 1)[0]);
