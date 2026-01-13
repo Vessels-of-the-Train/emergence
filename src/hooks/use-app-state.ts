@@ -1,1 +1,1 @@
-export function useAppState() { return { analysisReport: "", projectName: "Project Emergence" }; }
+export { useAppState } from '@/context/app-state-context';

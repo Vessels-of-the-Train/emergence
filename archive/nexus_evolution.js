@@ -13,7 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentVersionTitle = document.getElementById('current-version-title');
     const versionContent = document.getElementById('version-content');
     const galactusReviewPanel = document.getElementById('galactus-review-panel');
+    const reviewPanelTitle = document.getElementById('review-panel-title');
     const reviewDetails = galactusReviewPanel.querySelector('.review-details');
+    const citationList = document.getElementById('citation-list');
     const outputDisplay = document.getElementById('output-display');
     const outputButtons = document.querySelectorAll('.output-btn');
 
@@ -40,20 +42,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Function to render citations
+    function renderCitations() {
+        citationList.innerHTML = '';
+        if (idea.academic_grounding && idea.academic_grounding.linked_sources) {
+            idea.academic_grounding.linked_sources.forEach(source => {
+                const li = document.createElement('li');
+                // Clean up source name for display (replace underscores with spaces and capitalize)
+                const displayName = source.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                li.textContent = displayName;
+                citationList.appendChild(li);
+            });
+        } else {
+            citationList.innerHTML = '<li>No academic sources linked.</li>';
+        }
+    }
+
     // Function to display version details
     function displayVersionDetails(version) {
         currentVersionTitle.textContent = `${version.v} - ${version.notes}`;
         versionContent.innerHTML = `<p><strong>Date:</strong> ${version.date}</p><p>${version.content}</p>`;
 
-        // Hide Galactus Review panel by default unless it's the review item
+        // Hide Review panel by default unless it's the review item
         galactusReviewPanel.style.display = 'none';
-        if (version.isReview) {
+        if (version.isReview && idea.reviews && idea.reviews.length > 0) {
             galactusReviewPanel.style.display = 'block';
-            const review = idea.reviews[0]; // Assuming one Galactus review for now
+            // Try to find the matching review if possible, or use the first one
+            const review = idea.reviews.find(r => version.v.includes(r.reviewer)) || idea.reviews[0];
+            
+            reviewPanelTitle.textContent = `${review.reviewer} Review`;
             reviewDetails.innerHTML = `
                 <p><strong>Reviewer:</strong> ${review.reviewer}</p>
                 <p><strong>Date:</strong> ${review.date}</p>
-                <p><strong>Type:</strong> ${review.type}</p>
+                <p><strong>Type:</strong> ${review.type.replace(/_/g, ' ')}</p>
                 <p><strong>Priority:</strong> ${review.priority}</p>
                 <h4>Findings:</h4>
                 <ul>
@@ -97,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial render
     renderTimeline();
+    renderCitations();
     // Display the latest version by default
     const initialVersionIndex = idea.versions.length - 1;
     timelineContainer.children[initialVersionIndex].classList.add('active');

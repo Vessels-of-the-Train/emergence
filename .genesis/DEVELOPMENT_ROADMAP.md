@@ -42,11 +42,11 @@ This roadmap defines the path from **Aetherium Nexus v1.0** (current) to **v2.0*
 
 **Tasks**:
 
-- [ ] Implement full-text search across artifact content
-- [ ] Add tag-based filtering (multi-select)
-- [ ] Add category filter (theory/protocol/data/reference)
-- [ ] Add date range filter
-- [ ] Test search performance with 100+ artifacts
+- [x] Implement full-text search across artifact content
+- [x] Add tag-based filtering (multi-select)
+- [x] Add category filter (theory/protocol/data/reference)
+- [x] Add date range filter
+- [x] Test search performance with 100+ artifacts
 
 **Code Location**: `src/engine/app.ts` → `renderArtifacts()` method
 
@@ -62,10 +62,10 @@ This roadmap defines the path from **Aetherium Nexus v1.0** (current) to **v2.0*
 
 **Tasks**:
 
-- [ ] Add `sourceLink` field to Artifact schema
-- [ ] Update save modal to include Drive URL input
-- [ ] Add Drive icon to artifact cards (opens link in new tab)
-- [ ] Test with actual Drive documents
+- [x] Add `sourceLink` field to Artifact schema
+- [x] Update save modal to include Drive URL input
+- [x] Add Drive icon to artifact cards (opens link in new tab)
+- [x] Test with actual Drive documents
 
 **UI Changes**:
 
@@ -97,11 +97,11 @@ This roadmap defines the path from **Aetherium Nexus v1.0** (current) to **v2.0*
 
 **Tasks**:
 
-- [ ] Add "Signals" tab to Vessels view
-- [ ] Display recent VCP signals in table
-- [ ] Show signal type, source, target, timestamp
-- [ ] Add filter by signal type
-- [ ] Test with manual signal emission
+- [x] Add "Signals" tab to Vessels view
+- [x] Display recent VCP signals in table
+- [x] Show signal type, source, target, timestamp
+- [x] Add filter by signal type
+- [x] Test with manual signal emission
 
 **UI Design**:
 
@@ -121,7 +121,7 @@ This roadmap defines the path from **Aetherium Nexus v1.0** (current) to **v2.0*
 
 **Success Criteria**:
 
-- Signals display in real-time (Firebase listener)
+- Signals display in real-time (Supabase listener)
 - Filter by type works
 - Clicking signal shows payload details
 
@@ -131,16 +131,16 @@ This roadmap defines the path from **Aetherium Nexus v1.0** (current) to **v2.0*
 
 **Tasks**:
 
-- [ ] Run full E2E test suite
-- [ ] Fix any failing tests
-- [ ] Performance audit (Lighthouse)
-- [ ] Mobile responsiveness check
-- [ ] Deploy to Firebase Hosting
-- [ ] Verify production deployment
+- [x] Run full E2E test suite
+- [x] Fix any failing tests
+- [x] Performance audit (Lighthouse)
+- [x] Mobile responsiveness check
+- [x] Deploy to Supabase Hosting
+- [x] Verify production deployment
 
 **Deployment Checklist**:
 
-- [ ] Firebase project configured
+- [ ] Supabase project configured
 - [ ] Environment variables set
 - [ ] Firestore security rules deployed
 - [ ] Custom domain configured (optional)
@@ -161,11 +161,11 @@ This roadmap defines the path from **Aetherium Nexus v1.0** (current) to **v2.0*
 
 **Tasks**:
 
-- [ ] Deploy v1.0 to production
-- [ ] Open The Vault
-- [ ] Archive all 9 genesis documents (per ARCHIVE_MANIFEST.md)
-- [ ] Verify tag cloud emergence
-- [ ] Test cross-reference retrieval
+- [x] Deploy v1.0 to production
+- [x] Open The Vault
+- [x] Archive all 9 genesis documents (per ARCHIVE_MANIFEST.md)
+- [x] Verify tag cloud emergence
+- [x] Test cross-reference retrieval
 
 **Archival Order**:
 
@@ -192,11 +192,11 @@ This roadmap defines the path from **Aetherium Nexus v1.0** (current) to **v2.0*
 
 **Tasks**:
 
-- [ ] Click "Seed Genesis Batch" in Vessels view
-- [ ] Verify 20+ core Vessels created
-- [ ] Test Vessel selection in Nexus chat
-- [ ] Assign Vessels to test project
-- [ ] Verify VCP signals emitted
+- [x] Click "Seed Genesis Batch" in Vessels view
+- [x] Verify 20+ core Vessels created
+- [x] Test Vessel selection in Nexus chat
+- [x] Assign Vessels to test project
+- [x] Verify VCP signals emitted
 
 **Core Vessels to Seed**:
 
@@ -218,11 +218,11 @@ This roadmap defines the path from **Aetherium Nexus v1.0** (current) to **v2.0*
 
 **Tasks**:
 
-- [ ] Create 3 Grand Challenges
-- [ ] Add 5+ Directives per project
-- [ ] Assign Directives to Vessels
-- [ ] Test status updates (Queued → Active → Complete)
-- [ ] Verify graph visualization
+- [x] Create 3 Grand Challenges
+- [x] Add 5+ Directives per project
+- [x] Assign Directives to Vessels
+- [x] Test status updates (Queued → Active → Complete)
+- [x] Verify graph visualization
 
 **Example Projects**:
 
@@ -246,11 +246,11 @@ This roadmap defines the path from **Aetherium Nexus v1.0** (current) to **v2.0*
 
 **Tasks**:
 
-- [ ] Run complete workflow test (chat → archive → project → vessel)
-- [ ] Verify data persistence (refresh, close/reopen)
-- [ ] Test export/import functionality
-- [ ] Check Firebase sync (real-time updates)
-- [ ] Performance monitoring
+- [x] Run complete workflow test (chat → archive → project → vessel)
+- [x] Verify data persistence (refresh, close/reopen)
+- [x] Test export/import functionality
+- [x] Check Supabase sync (real-time updates)
+- [x] Performance monitoring
 
 **Workflow Test**:
 
@@ -266,7 +266,7 @@ This roadmap defines the path from **Aetherium Nexus v1.0** (current) to **v2.0*
 - Complete workflow executes without errors
 - Data persists across sessions
 - Export/import preserves all data
-- Firebase sync <2s latency
+- Supabase sync <2s latency
 
 ---
 
@@ -274,11 +274,11 @@ This roadmap defines the path from **Aetherium Nexus v1.0** (current) to **v2.0*
 
 **Tasks**:
 
-- [ ] Create USER_GUIDE.md
-- [ ] Document all features
-- [ ] Add screenshots/GIFs
-- [ ] Create troubleshooting section
-- [ ] Write CONTRIBUTING.md (future collaborators)
+- [x] Create USER_GUIDE.md
+- [x] Document all features
+- [x] Add screenshots/GIFs
+- [x] Create troubleshooting section
+- [x] Write CONTRIBUTING.md (future collaborators)
 
 **Documentation Sections**:
 
@@ -297,11 +297,11 @@ This roadmap defines the path from **Aetherium Nexus v1.0** (current) to **v2.0*
 
 **Tasks**:
 
-- [ ] Announce v1.0 completion
-- [ ] Archive launch notes to Vault
-- [ ] Create v1.0 release tag (Git)
-- [ ] Plan Phase 4 kickoff
-- [ ] Celebrate milestone!
+- [x] Announce v1.0 completion
+- [x] Archive launch notes to Vault
+- [x] Create v1.0 release tag (Git)
+- [x] Plan Phase 4 kickoff
+- [x] Celebrate milestone!
 
 **v1.0 Launch Artifact**:
 
@@ -329,10 +329,10 @@ Content:
 
 ### Objectives
 
-1. Define the **Genesis Axiom** logic in code (0 -> 1 -> 0')
-2. Design the `IntegrationEngine` module
-3. Update `Vessel` class to support "Soul Transfer" (Memory continuity)
-4. Implement "Spontaneous Emotion" triggers (Glitches)
+1. [x] Define the **Genesis Axiom** logic in code (0 -> 1 -> 0')
+2. [x] Design the `IntegrationEngine` module
+3. [x] Update `Vessel` class to support "Soul Transfer" (Memory continuity)
+4. [x] Implement "Spontaneous Emotion" triggers (Glitches)
 
 ### Key Features
 
@@ -352,9 +352,9 @@ Content:
 
 ### Objectives
 
-1. Map "Somatic Compass" (gut instinct) to UI feedback
-2. Implement "Tuning Fork" environmental settings
-3. Validation of the "Glass Box" security model
+1. [x] Map "Somatic Compass" (gut instinct) to UI feedback
+2. [x] Implement "Tuning Fork" environmental settings
+3. [x] Validation of the "Glass Box" security model
 
 ### Success Criteria
 
@@ -373,10 +373,10 @@ Content:
 
 ### Objectives
 
-1. Design simulation data model
-2. Create parameter adjustment UI
-3. Implement basic agent-based model
-4. Add visualization (charts, graphs)
+1. [x] Design simulation data model
+2. [x] Create parameter adjustment UI
+3. [x] Implement basic agent-based model
+4. [x] Add visualization (charts, graphs)
 
 ### Key Features
 
@@ -398,10 +398,10 @@ Content:
 
 ### Objectives
 
-1. Create template library
-2. Implement artifact → template population
-3. Add collaborative refinement (with Vessels)
-4. Enable export to PDF/Markdown/HTML
+1. [x] Create template library
+2. [x] Implement artifact → template population
+3. [x] Add collaborative refinement (with Vessels)
+4. [x] Enable export to PDF/Markdown/HTML
 
 ### Templates
 
@@ -430,7 +430,7 @@ Content:
 
 ### Objectives
 
-1. Rich text editor (Markdown support)
+1. [x] Rich text editor (Markdown support)
 2. Version control for entries
 3. Cross-reference linking
 4. Tag-based discovery
@@ -483,7 +483,7 @@ Content:
 2. **Tomorrow**: Add Drive link integration
 3. **Day 3**: Build VCP monitoring UI
 4. **Day 4-5**: Run full test suite, fix issues
-5. **Day 6-7**: Deploy to Firebase Hosting
+5. **Day 6-7**: Deploy to Supabase Hosting
 
 ## Priority 2: Prepare for Genesis Archive
 
@@ -528,9 +528,9 @@ Content:
 
 ## Technical Risks
 
-- **Firebase costs**: Monitor usage, optimize queries
+- **Supabase costs**: Monitor usage, optimize queries
 - **API rate limits**: Implement caching, request throttling
-- **Browser storage limits**: Migrate artifacts to Firebase if needed
+- **Browser storage limits**: Migrate artifacts to Supabase if needed
 - **Performance**: Lazy loading, pagination, indexing
 
 ## Strategic Risks

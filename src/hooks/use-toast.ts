@@ -1,1 +1,1 @@
-export function useToast() { return { toast: (props: any) => { } }; }
+export { useToast } from '@/context/toast-context';

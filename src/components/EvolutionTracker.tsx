@@ -24,10 +24,10 @@ function cn(...inputs: ClassValue[]) {
 
 interface EvolutionTrackerProps {
     idea: Idea;
-    onBack?: () => void;
+    onClose?: () => void;
 }
 
-export default function EvolutionTracker({ idea, onBack }: EvolutionTrackerProps) {
+export default function EvolutionTracker({ idea, onClose }: EvolutionTrackerProps) {
     const [selectedVersionIndex, setSelectedVersionIndex] = useState(idea.versions.length - 1);
     const selectedVersion = idea.versions[selectedVersionIndex];
     const [activeTrack, setActiveTrack] = useState<keyof Idea['output_tracks']>('scientific');
@@ -37,7 +37,7 @@ export default function EvolutionTracker({ idea, onBack }: EvolutionTrackerProps
             <div className="flex items-center justify-between">
                 <div>
                     <button
-                        onClick={onBack}
+                        onClick={onClose}
                         className="text-blue-400 hover:text-blue-300 transition-colors flex items-center mb-2"
                     >
                         <ChevronRight className="rotate-180 w-4 h-4 mr-1" />

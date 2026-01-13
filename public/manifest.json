@@ -1,0 +1,22 @@
+{
+  "name": "Aetherium Nexus",
+  "short_name": "Nexus",
+  "description": "Operating System for Emergence",
+  "start_url": "/nexus",
+  "display": "standalone",
+  "background_color": "#0a0f14",
+  "theme_color": "#00f0ff",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "https://em-content.zobj.net/source/microsoft-teams/363/cyclone_1f300.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

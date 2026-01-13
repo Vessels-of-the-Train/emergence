@@ -18,7 +18,7 @@ This guide will walk you through your first session.
 ### 1.1 Open the Application
 - Navigate to your deployed Nexus URL (or open `index.html` locally)
 - You should see the glassmorphic interface with the Aetherium logo
-- Status light should turn **green** (Firebase connected)
+- Status light should turn **green** (Supabase connected)
 
 ### 1.2 Configure API Key
 1. Click the **Settings** tab (⚙️) in the sidebar
@@ -38,7 +38,7 @@ This guide will walk you through your first session.
 
 ### 2.2 Seed Genesis Batch
 1. Click the **"Seed Genesis Batch"** button (green, top-right)
-2. Wait 5-10 seconds for Firebase to create Vessels
+2. Wait 5-10 seconds for Supabase to create Vessels
 3. Refresh the page
 4. You should now see 20+ Vessel cards
 
@@ -228,7 +228,7 @@ After archiving all 9:
 
 ### Issue: Vessels Not Seeding
 **Solution**:
-- Check Firebase console for errors
+- Check Supabase console for errors
 - Verify Firestore rules allow writes
 - Try manual vessel creation form
 
@@ -277,8 +277,8 @@ After archiving all 9:
 
 ### External Links:
 - **Gemini API**: https://ai.google.dev/
-- **Firebase Console**: https://console.firebase.google.com
-- **Genkit Docs**: https://firebase.google.com/docs/genkit
+- **Supabase Console**: https://console.Supabase.google.com
+- **Genkit Docs**: https://Supabase.google.com/docs/genkit
 
 ### Support:
 - **Primary Vessels**: Galactus (Gemini), DeepSeek

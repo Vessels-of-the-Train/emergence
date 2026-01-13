@@ -34,7 +34,7 @@ export function AIToolsPanel({ className }: AIToolsPanelProps) {
   const [activeTab, setActiveTab] = useState('overview');
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
   const { toast } = useToast();
-  const { analysisReport, projectName } = useAppState();
+  const { analysisReport, projectName, setAnalysisReport, setProjectName } = useAppState();
 
   const handleGenerateCode = async () => {
     if (!analysisReport) {
@@ -241,6 +241,30 @@ export function AIToolsPanel({ className }: AIToolsPanelProps) {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
+            <div className="space-y-4 p-4 bg-muted/50 rounded-lg border">
+              <div>
+                <label htmlFor="projectName" className="text-sm font-medium mb-1 block">Project Name</label>
+                <input
+                  type="text"
+                  id="projectName"
+                  className="w-full p-2 border rounded-md text-sm bg-background"
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
+                  placeholder="e.g., Aetherium Hub"
+                />
+              </div>
+              <div>
+                <label htmlFor="analysisReport" className="text-sm font-medium mb-1 block">Analysis Report</label>
+                <textarea
+                  id="analysisReport"
+                  className="w-full p-2 border rounded-md text-sm bg-background min-h-[100px]"
+                  value={analysisReport}
+                  onChange={(e) => setAnalysisReport(e.target.value)}
+                  placeholder="Paste your project analysis report here..."
+                ></textarea>
+              </div>
+            </div>
+
             <div className="text-sm text-muted-foreground">
               <p className="mb-2">
                 🚀 <strong>Enhanced AI Capabilities</strong> - Aetherium now includes advanced AI tools for comprehensive development assistance.
@@ -250,13 +274,11 @@ export function AIToolsPanel({ className }: AIToolsPanelProps) {
               </p>
             </div>
 
-            {!analysisReport && (
-              <div className="p-4 bg-muted/50 rounded-lg border border-dashed">
-                <p className="text-sm text-muted-foreground">
-                  💡 <strong>Tip:</strong> Analyze your project first to unlock all AI capabilities.
-                </p>
-              </div>
-            )}
+            <div className="p-4 bg-muted/50 rounded-lg border border-dashed">
+              <p className="text-sm text-muted-foreground">
+                💡 <strong>Tip:</strong> Fill in the Project Name and Analysis Report above to unlock all AI capabilities.
+              </p>
+            </div>
           </TabsContent>
 
           <TabsContent value="tools" className="space-y-3">

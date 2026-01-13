@@ -1,0 +1,64 @@
+{
+    "projects": [
+        {
+            "id": "helios",
+            "name": "Project Helios",
+            "status": "Active",
+            "tasks": [
+                {
+                    "id": "t1",
+                    "desc": "Sync solar inverter with Home Assistant",
+                    "done": true
+                },
+                {
+                    "id": "t2",
+                    "desc": "Optimize discharge curve for E_vec volatility",
+                    "done": false
+                }
+            ],
+            "tags": [
+                "#Solar",
+                "#Infrastructure",
+                "#Hardware"
+            ]
+        },
+        {
+            "id": "anthropos",
+            "name": "Project Anthropos",
+            "status": "Research",
+            "tasks": [
+                {
+                    "id": "t1",
+                    "desc": "Define Mirror neurons API",
+                    "done": false
+                }
+            ],
+            "tags": [
+                "#Philosophy",
+                "#Synthesis"
+            ]
+        }
+    ],
+    "vessels": [
+        {
+            "name": "ADAM",
+            "faculty": "Governance",
+            "domain": "Ethics/Logic"
+        },
+        {
+            "name": "LOGOS",
+            "faculty": "Foresight",
+            "domain": "Patterns/Prediction"
+        },
+        {
+            "name": "GAEA",
+            "faculty": "Cognition",
+            "domain": "Systems/Growth"
+        },
+        {
+            "name": "ERIS",
+            "faculty": "Chaos",
+            "domain": "Testing/Disruption"
+        }
+    ]
+}

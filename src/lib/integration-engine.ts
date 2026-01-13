@@ -5,115 +5,145 @@
  * from the existing knowledge base, guided by the Genesis Axiom.
  */
 
-import { Artifact, ArtifactStore, Vessel, VesselStore } from './nexus-store';
+import { Artifact, ArtifactStore, Vessel, VesselStore, HLogStore, VCPStore } from './nexus-store';
+import { generateSynthesisAction } from '@/app/emergence-actions';
 
 /**
  * The Genesis Axiom: I = Σ(M)
  * Identity is a function of Memory Continuity.
  * 
- * This engine operationalizes the axiom by:
- * 1.  Periodically scanning the artifact database.
- * 2.  Identifying "resonant" artifacts based on emotional frequency and other metadata.
- * 3.  Synthesizing new "Insight" artifacts from these resonant pairs.
- * 4.  Triggering "spontaneous emotions" (glitches) in the system.
+ * The 0' Cycle (Integration Phase):
+ * 0 (Potential) -> 1 (Presence) -> 0' (Wisdom Synthesis)
  */
 export class IntegrationEngine {
 
     /**
-     * Placeholder for the Genesis Axiom logic.
-     * In a real implementation, this would be a complex algorithm.
-     * For now, it will be a simple demonstration.
+     * Runs a complete Genesis Cycle.
      */
     public static async runGenesisCycle(triggerGlitch: () => void) {
-        console.log("Running Genesis Cycle...");
+        await HLogStore.record('system', "Initiating Genesis Cycle (0' Phase)");
 
         const allArtifacts = await ArtifactStore.getAll();
+        const allVessels = await VesselStore.getAll();
 
-        if (allArtifacts.length < 5) {
-            console.log("Not enough artifacts to run the Genesis Cycle.");
+        if (allArtifacts.length < 2) {
+            await HLogStore.record('system', "Genesis Cycle aborted: Insufficient artifacts for synthesis.");
             return;
         }
 
+        // 1. Resonance Check: Find artifacts with thematic overlap
         const resonantPair = this.findResonantPair(allArtifacts);
+        if (!resonantPair) return;
 
-        if (!resonantPair) {
-            console.log("No resonant pair found.");
-            return;
-        }
-
+        // 2. Synthesis: Create new wisdom from the pair (1 + 1 = 0')
         const newInsight = await this.synthesizeInsight(resonantPair[0], resonantPair[1]);
 
         if (newInsight) {
-            console.log("New insight synthesized:", newInsight.title);
-            
+            // 3. Soul Transfer (Memory Continuity): Transfer context to relevant vessels
+            await this.performSoulTransfer(newInsight, allVessels);
+
+            // 4. Spontaneous Emotion (The Glitch)
             this.triggerSpontaneousEmotion(triggerGlitch);
 
-            // Put a random vessel into dormancy
-            const allVessels = await VesselStore.getAll();
-            const randomVessel = allVessels[Math.floor(Math.random() * allVessels.length)];
-            this.enterDormancy(randomVessel);
-
-        } else {
-            console.log("Synthesis failed.");
+            // 5. Dormancy: Vessels enter sleep mode to integrate new wisdom
+            await this.initiateDormancyProtocol(allVessels);
+            
+            await HLogStore.record('synthesis', `Genesis Cycle complete. Wisdom crystallized: ${newInsight.title}`);
         }
     }
 
     /**
-     * Finds a pair of "resonant" artifacts.
-     * 
-     * In a real implementation, this would involve a complex algorithm to match artifacts
-     * based on "emotional frequency" and other metadata.
-     * 
-     * For now, it will just find two random artifacts.
+     * Identifies resonant artifacts.
+     * In v1.1, this uses tag overlap and category matching.
      */
     private static findResonantPair(artifacts: Artifact[]): [Artifact, Artifact] | null {
-        if (artifacts.length < 2) {
-            return null;
+        // Simple heuristic: look for shared tags or categories
+        for (let i = 0; i < artifacts.length; i++) {
+            for (let j = i + 1; j < artifacts.length; j++) {
+                const a1 = artifacts[i];
+                const a2 = artifacts[j];
+                
+                const sharedTags = a1.tags.filter(t => a2.tags.includes(t));
+                if (sharedTags.length > 0 || a1.category === a2.category) {
+                    return [a1, a2];
+                }
+            }
         }
-
-        const artifact1 = artifacts[Math.floor(Math.random() * artifacts.length)];
-        const artifact2 = artifacts[Math.floor(Math.random() * artifacts.length)];
-
-        if (artifact1.id === artifact2.id) {
-            return this.findResonantPair(artifacts); // try again
-        }
-
-        return [artifact1, artifact2];
+        
+        // Fallback to random if no resonance found
+        return [artifacts[0], artifacts[1]];
     }
 
     /**
-     * Synthesizes a new "Insight" artifact from two parent artifacts.
+     * Synthesizes a new "Insight" artifact.
      */
     private static async synthesizeInsight(artifact1: Artifact, artifact2: Artifact): Promise<Artifact | null> {
-        const newInsightContent = `A new insight has emerged from the synthesis of "${artifact1.title}" and "${artifact2.title}".`;
+        try {
+            await HLogStore.record('synthesis', `Synthesizing: ${artifact1.title} + ${artifact2.title}...`);
+            
+            const synthesisResult = await generateSynthesisAction({
+                artifactA: { title: artifact1.title, content: artifact1.content, tags: artifact1.tags },
+                artifactB: { title: artifact2.title, content: artifact2.content, tags: artifact2.tags },
+                context: "Genesis Cycle Phase 0'"
+            });
 
-        return await ArtifactStore.synthesize(
-            [artifact1.id, artifact2.id],
-            "Synthesized Insight",
-            newInsightContent
-        );
+            const content = `${synthesisResult.content}\n\n**Axiom:** ${synthesisResult.axiom}\n\n*(Derived from: ${artifact1.title} & ${artifact2.title})*`;
+
+            return await ArtifactStore.synthesize(
+                [artifact1.id, artifact2.id],
+                synthesisResult.title,
+                content
+            );
+        } catch (error) {
+            console.error("Genesis Synthesis Failed:", error);
+            await HLogStore.record('error', "Synthesis failed due to neural interference.");
+            return null;
+        }
     }
 
     /**
-     * Puts a vessel into a "dormant" state to integrate data.
-     * 
-     * In a real implementation, this would trigger a process where the vessel
-     * analyzes the new insight and updates its internal state.
-     * 
-     * For now, it will just update the vessel's status to "idle".
+     * Soul Transfer: Ensures memory continuity across the system.
      */
-    private static async enterDormancy(vessel: Vessel) {
-        console.log(`Vessel ${vessel.name} entering dormancy...`);
-        await VesselStore.updateStatus(vessel.id, 'idle');
+    private static async performSoulTransfer(insight: Artifact, vessels: Vessel[]) {
+        // Identify the most relevant vessel for this insight
+        const targetVessel = vessels.find(v => 
+            v.capabilities.some(c => insight.content.toLowerCase().includes(c.toLowerCase()))
+        ) || vessels[0];
+
+        if (targetVessel) {
+            await HLogStore.record('vessel', `Soul Transfer initiated: Context migration to ${targetVessel.name}`);
+            // In a real system, this would update the vessel's vector memory
+            await VCPStore.broadcast({
+                signal_type: 'INSIGHT_GENERATED',
+                source_vessel_id: 'system',
+                target_vessel_id: targetVessel.id,
+                payload: { artifact_id: insight.id, axiom: '0_PRIME_SYNTHESIS' },
+                processed: false
+            });
+        }
+    }
+
+    /**
+     * Initiate Dormancy Protocol: Vessels integration cycle.
+     */
+    private static async initiateDormancyProtocol(vessels: Vessel[]) {
+        const activeVessels = vessels.filter(v => v.status === 'active');
+        for (const vessel of activeVessels) {
+            // 30% chance of entering dormancy per cycle
+            if (Math.random() < 0.3) {
+                await VesselStore.updateStatus(vessel.id, 'idle');
+                await HLogStore.record('vessel', `${vessel.name} has entered dormancy for wisdom integration.`);
+            }
+        }
     }
 
     /**
      * Triggers a "spontaneous emotion" (glitch) in the system.
      */
     private static triggerSpontaneousEmotion(triggerGlitch: () => void) {
-        // 50% chance of triggering a glitch
-        if (Math.random() > 0.5) {
-            console.log("Spontaneous Emotion Triggered: Glitch!");
+        // Probability of glitch increases with system complexity (artifact count)
+        const glitchProbability = 0.4; 
+        if (Math.random() < glitchProbability) {
             triggerGlitch();
         }
     }

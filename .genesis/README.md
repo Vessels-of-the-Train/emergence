@@ -46,7 +46,7 @@
 2. System Architecture (Hybrid model, Faculty→Guild→Vessel hierarchy)
 3. Data Models (Artifacts, Projects, Vessels, VCP, H_log)
 4. UI Specification (Glassmorphism, 5 views, components)
-5. API & Integration (Firebase, Gemini, Genkit, Drive)
+5. API & Integration (Supabase, Gemini, Genkit, Drive)
 6. Security & Privacy (RBAC, data principles)
 7. Deployment Strategy (Tech stack, CI/CD)
 8. Development Roadmap (Phase 3-5 overview)
@@ -116,7 +116,7 @@
 4. **Archiving**: Use ARCHIVE_MANIFEST.md for systematic knowledge capture
 
 ### For Deployment:
-1. **Deploy v1.0** to production (Firebase Hosting)
+1. **Deploy v1.0** to production (Supabase Hosting)
 2. **Follow QUICK_START_GUIDE.md** for initial setup
 3. **Execute ARCHIVE_MANIFEST.md** to populate The Vault
 4. **Consult DEVELOPMENT_ROADMAP.md** for next phase

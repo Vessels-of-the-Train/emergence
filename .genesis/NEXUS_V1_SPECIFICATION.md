@@ -103,7 +103,7 @@ A theoretical language developed to describe the interactions between Vessels an
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
 │  ┌──────────────┐         ┌──────────────┐            │
-│  │   Frontend   │◄────────┤   Firebase   │            │
+│  │   Frontend   │◄────────┤   Supabase   │            │
 │  │  (Browser)   │         │  (Cloud DB)  │            │
 │  └──────┬───────┘         └──────────────┘            │
 │         │                                              │
@@ -114,7 +114,7 @@ A theoretical language developed to describe the interactions between Vessels an
 │  │  (Artifacts) │                                     │
 │  └──────────────┘                                     │
 │                                                         │
-│  Firebase: Vessels, Projects, H_log, VCP signals       │
+│  Supabase: Vessels, Projects, H_log, VCP signals       │
 │  Local: Artifacts, user preferences, session state     │
 │                                                         │
 └─────────────────────────────────────────────────────────┘
@@ -122,10 +122,10 @@ A theoretical language developed to describe the interactions between Vessels an
 
 **Rationale**:
 
-- **Firebase**: Real-time sync for collaborative entities (Vessels, Projects)
+- **Supabase**: Real-time sync for collaborative entities (Vessels, Projects) via PostgreSQL
 - **localStorage**: Privacy-first for personal artifacts, fast retrieval
-- **Scalability**: Can migrate artifacts to Firebase later if needed
-- **Resilience**: System functional even if Firebase unavailable
+- **Scalability**: Can migrate artifacts to Supabase later if needed
+- **Resilience**: System functional even if Supabase unavailable
 
 ## 2.2 Hierarchical Structure
 
@@ -278,7 +278,7 @@ interface Artifact {
 type ArtifactCategory = 'theory' | 'protocol' | 'data' | 'reference';
 ```
 
-### 3.1.2 Projects (Firebase Firestore)
+### 3.1.2 Projects (Supabase Firestore)
 
 ```typescript
 interface Project {
@@ -325,7 +325,7 @@ interface Milestone {
 }
 ```
 
-### 3.1.3 Vessels (Firebase Firestore)
+### 3.1.3 Vessels (Supabase Firestore)
 
 ```typescript
 interface Vessel {
@@ -354,7 +354,7 @@ type Faculty = 'cognition' | 'foresight' | 'governance' | 'chaos';
 type VesselStatus = 'active' | 'idle' | 'offline' | 'archived';
 ```
 
-### 3.1.4 VCP Signals (Firebase Firestore)
+### 3.1.4 VCP Signals (Supabase Firestore)
 
 ```typescript
 interface VCPSignal {
@@ -388,7 +388,7 @@ type SignalType =
 }
 ```
 
-### 3.1.5 H_log Entries (Firebase Firestore - Future)
+### 3.1.5 H_log Entries (Supabase Firestore - Future)
 
 ```typescript
 interface HlogEntry {
@@ -697,15 +697,15 @@ showToast({
 
 # 5. API & Integration Layer
 
-## 5.1 Firebase Integration
+## 5.1 Supabase Integration
 
 ### 5.1.1 Configuration
 
 ```typescript
-// Firebase config (from environment variables)
-const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: "aetherium-nexus.firebaseapp.com",
+// Supabase config (from environment variables)
+const SupabaseConfig = {
+  apiKey: process.env.Supabase_API_KEY,
+  authDomain: "aetherium-nexus.Supabaseapp.com",
   projectId: "aetherium-nexus",
   storageBucket: "aetherium-nexus.appspot.com",
   messagingSenderId: "...",
@@ -713,11 +713,11 @@ const firebaseConfig = {
 };
 
 // Initialize
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInAnonymously } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { initializeApp } from 'Supabase/app';
+import { getAuth, signInAnonymously } from 'Supabase/auth';
+import { getFirestore } from 'Supabase/firestore';
 
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(SupabaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 ```
@@ -806,7 +806,7 @@ async function sendMessage(prompt: string, vesselId?: string): Promise<string> {
 }
 ```
 
-## 5.3 Firebase Genkit Integration
+## 5.3 Supabase Genkit Integration
 
 ### 5.3.1 Fold Flow
 
@@ -888,7 +888,7 @@ async function linkDriveArtifact(artifactId: string, driveFileId: string) {
 ## 6.1 Data Privacy Principles
 
 1. **Local-First for Personal Data**: Artifacts stored in browser localStorage
-2. **Encrypted Transit**: All Firebase communication over HTTPS
+2. **Encrypted Transit**: All Supabase communication over HTTPS
 3. **Anonymous Auth**: No email/password required for basic use
 4. **User Control**: Export/delete all data at any time
 5. **No Third-Party Tracking**: No analytics, no cookies beyond session
@@ -944,7 +944,7 @@ const ROLE_PERMISSIONS: Record<UserRole, UserPermissions> = {
 interface APIKeys {
   gemini?: string;
   openai?: string;
-  firebase?: string;
+  Supabase?: string;
 }
 
 function setAPIKey(service: keyof APIKeys, key: string) {
@@ -970,8 +970,8 @@ function getAPIKey(service: keyof APIKeys): string | undefined {
 - **Frontend**: TypeScript, HTML5, CSS3
 - **Build Tool**: Vite
 - **Testing**: Playwright (E2E), Vitest (unit)
-- **Backend**: Firebase (Auth, Firestore, Hosting)
-- **AI**: Google Gemini API, Firebase Genkit
+- **Backend**: Supabase (Auth, Firestore, Hosting)
+- **AI**: Google Gemini API, Supabase Genkit
 - **Version Control**: Git + GitHub
 
 ### 7.1.2 Project Structure
@@ -1019,24 +1019,24 @@ npm test
 npm run build
 ```
 
-### 7.2.2 Firebase Deployment
+### 7.2.2 Supabase Deployment
 
 ```bash
-# Initialize Firebase
-firebase init
+# Initialize Supabase
+Supabase init
 
-# Deploy to Firebase Hosting
-firebase deploy --only hosting
+# Deploy to Supabase Hosting
+Supabase deploy --only hosting
 
 # Deploy Firestore rules
-firebase deploy --only firestore:rules
+Supabase deploy --only firestore:rules
 ```
 
 ### 7.2.3 CI/CD Pipeline (Future)
 
 ```yaml
 # .github/workflows/deploy.yml
-name: Deploy to Firebase
+name: Deploy to Supabase
 on:
   push:
     branches: [main]
@@ -1048,10 +1048,10 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - uses: SupabaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          SupabaseServiceAccount: '${{ secrets.Supabase_SERVICE_ACCOUNT }}'
 ```
 
 ---
@@ -1070,7 +1070,7 @@ jobs:
 - 🔄 The Vault search & filter
 - 🔄 Artifact → Drive linking
 - 🔄 VCP signal monitoring UI
-- ⏳ Deploy to Firebase Hosting
+- ⏳ Deploy to Supabase Hosting
 
 **Success Criteria**:
 
@@ -1166,7 +1166,7 @@ test('should trigger Fold flow', async ({ page }) => {
 - [ ] All 5 views render correctly
 - [ ] Chat sends/receives messages
 - [ ] Artifacts save to localStorage
-- [ ] Projects persist to Firebase
+- [ ] Projects persist to Supabase
 - [ ] Vessels display in directory
 - [ ] Genkit Fold produces synthesis
 - [ ] Export/Import data works
@@ -1174,7 +1174,7 @@ test('should trigger Fold flow', async ({ page }) => {
 
 ### Post-Deployment
 
-- [ ] Firebase auth works
+- [ ] Supabase auth works
 - [ ] Firestore real-time sync active
 - [ ] API keys secure
 - [ ] Performance acceptable (<2s load)
