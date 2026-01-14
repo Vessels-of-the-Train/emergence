@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import { ai } from '@/ai/genkit';
-import { textEmbeddingGecko001 } from '@genkit-ai/google-genai'; // Using older model for stability, or update to 004
 import cosineSimilarity from 'cosine-similarity';
 import { DocumentChunk } from './document-processor';
 
@@ -51,7 +50,7 @@ export class VectorStore {
             const promises = batch.map(async (chunk) => {
                 try {
                     const { embedding } = await ai.embed({
-                        embedder: textEmbeddingGecko001,
+                        embedder: 'googleai/text-embedding-004',
                         content: chunk.content,
                     });
                     return { ...chunk, embedding } as VectorDocument;
@@ -77,7 +76,7 @@ export class VectorStore {
 
         try {
             const { embedding: queryVector } = await ai.embed({
-                embedder: textEmbeddingGecko001,
+                embedder: 'googleai/text-embedding-004',
                 content: query,
             });
 

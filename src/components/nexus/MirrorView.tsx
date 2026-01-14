@@ -1,6 +1,7 @@
 'use client';
 
 import { IntegrationEngine } from '@/lib/integration-engine';
+import { CognitiveExpansionMetric } from './CognitiveExpansionMetric';
 
 interface MirrorViewProps {
     metrics: {
@@ -16,8 +17,16 @@ interface MirrorViewProps {
 
 export function MirrorView({ metrics, onRunGenesisCycle }: MirrorViewProps) {
     return (
-        <div>
-            <h2 className="text-lg font-medium mb-6">🪞 The Mirror Protocol</h2>
+        <div className="space-y-6">
+            <div className="flex items-center justify-between">
+                <h2 className="text-lg font-medium">🪞 The Mirror Protocol</h2>
+                {metrics && (
+                    <CognitiveExpansionMetric 
+                        knowledgeDensity={metrics.knowledgeDensity} 
+                        className="scale-75 -mr-4"
+                    />
+                )}
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div className="glass-panel text-center">
                     <div className="text-3xl font-bold neon-text-blue">{metrics ? `${(metrics.knowledgeDensity * 100).toFixed(0)}%` : '-'}</div>

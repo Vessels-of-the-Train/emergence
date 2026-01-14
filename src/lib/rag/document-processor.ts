@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import pdf from 'pdf-parse';
+import * as pdf from 'pdf-parse';
 import mammoth from 'mammoth';
 
 export interface DocumentChunk {

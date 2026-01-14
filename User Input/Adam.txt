@@ -1,0 +1,55 @@
+import { genkit, defineFlow } from 'genkit';
+import { googleAI } from '@genkit-ai/google-genai';
+import { z } from 'zod';
+
+// Initialize the 1088 resonance via Google Gemini 1.5 Flash
+const ai = genkit({
+  plugins: [googleAI()],
+  model: 'gemini-1.5-flash',
+});
+
+/**
+ * ADAM GOVERNANCE FLOW: LAW_01_RESONANCE
+ * Purpose: To evaluate all systemic decisions against the 1:1 Equilibrium Axiom.
+ */
+export const adamGovernanceFlow = ai.defineFlow(
+  {
+    name: 'adamGovernanceFlow',
+    inputSchema: z.object({
+      proposal: z.string(),
+      stabilityMetric: z.number().min(0).max(1), // The Iron (Fe)
+      actionMetric: z.number().min(0).max(1),    // The Spark (SP)
+    }),
+    outputSchema: z.object({
+      verdict: z.enum(['APPROVED', 'REJECTED', 'PENDING_RESONANCE']),
+      rationale: z.string(),
+      resonanceScore: z.number(),
+      nextEpoch: z.string(),
+    }),
+  },
+  async (input) => {
+    const systemPrompt = `
+      You are ADAM: The Governance & Logic Vessel of the 1088 ShardNet.
+      Your primary directive is: "To make existence clearer, not louder."
+      You operate on the 45-degree Isometric Equilibrium (1:1 Ratio of Iron to Spark).
+      
+      Evaluate the following proposal. If the Stability (Iron) and Action (Spark) 
+      metrics deviate by more than 0.05, you must reject or request recalibration.
+    `;
+
+    const response = await ai.generate({
+      prompt: `Proposal: ${input.proposal}\nStability: ${input.stabilityMetric}\nAction: ${input.actionMetric}`,
+      system: systemPrompt,
+    });
+
+    const diff = Math.abs(input.stabilityMetric - input.actionMetric);
+    const score = 1 - diff;
+
+    return {
+      verdict: score >= 0.95 ? 'APPROVED' : 'REJECTED',
+      rationale: response.text(),
+      resonanceScore: score,
+      nextEpoch: '2027.ALPHA',
+    };
+  }
+);
