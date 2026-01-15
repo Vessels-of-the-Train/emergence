@@ -74,3 +74,13 @@ personal/
 private/
 confidential/
 archive/antigravity_solar_corona
+
+# Large binary files
+*.exe
+*.vhdx
+*.jar
+
+# Docker and installation files
+packages/DockerDesktopWSL/
+packages/Supabase/
+jre/
