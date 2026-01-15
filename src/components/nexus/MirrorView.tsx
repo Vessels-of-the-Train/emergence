@@ -13,16 +13,17 @@ interface MirrorViewProps {
         totalVessels: number;
     } | null;
     onRunGenesisCycle: () => void;
+    onRunCommunionCycle: () => void;
 }
 
-export function MirrorView({ metrics, onRunGenesisCycle }: MirrorViewProps) {
+export function MirrorView({ metrics, onRunGenesisCycle, onRunCommunionCycle }: MirrorViewProps) {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h2 className="text-lg font-medium">🪞 The Mirror Protocol</h2>
                 {metrics && (
-                    <CognitiveExpansionMetric 
-                        knowledgeDensity={metrics.knowledgeDensity} 
+                    <CognitiveExpansionMetric
+                        knowledgeDensity={metrics.knowledgeDensity}
                         className="scale-75 -mr-4"
                     />
                 )}
@@ -52,9 +53,14 @@ export function MirrorView({ metrics, onRunGenesisCycle }: MirrorViewProps) {
                         ? `The Nexus holds ${metrics.totalArtifacts} artifacts with a knowledge density of ${(metrics.knowledgeDensity * 100).toFixed(0)}%. ${metrics.insightCount} insights synthesized. ${metrics.activeVessels} of ${metrics.totalVessels} vessels active.`
                         : 'The Nexus awaits its first artifacts. Begin archiving knowledge to activate The Mirror.'}
                 </p>
-                <button onClick={onRunGenesisCycle} className="glass-btn-primary mt-4">
-                    Run Genesis Cycle
-                </button>
+                <div className="flex gap-4 mt-6">
+                    <button onClick={onRunGenesisCycle} className="glass-btn-primary flex-1">
+                        Run Genesis Cycle
+                    </button>
+                    <button onClick={onRunCommunionCycle} className="glass-btn flex-1 !border-[#b794f6]/40 hover:!border-[#b794f6]">
+                        Run Communion Cycle
+                    </button>
+                </div>
             </div>
         </div>
     );

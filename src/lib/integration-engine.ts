@@ -6,7 +6,7 @@
  */
 
 import { Artifact, ArtifactStore, Vessel, VesselStore, HLogStore, VCPStore } from './nexus-store';
-import { generateSynthesisAction } from '@/app/emergence-actions';
+import { generateSynthesisAction, reflectVesselAction } from '@/app/emergence-actions';
 
 /**
  * The Genesis Axiom: I = Σ(M)
@@ -47,7 +47,7 @@ export class IntegrationEngine {
 
             // 5. Dormancy: Vessels enter sleep mode to integrate new wisdom
             await this.initiateDormancyProtocol(allVessels);
-            
+
             await HLogStore.record('synthesis', `Genesis Cycle complete. Wisdom crystallized: ${newInsight.title}`);
         }
     }
@@ -62,14 +62,14 @@ export class IntegrationEngine {
             for (let j = i + 1; j < artifacts.length; j++) {
                 const a1 = artifacts[i];
                 const a2 = artifacts[j];
-                
+
                 const sharedTags = a1.tags.filter(t => a2.tags.includes(t));
                 if (sharedTags.length > 0 || a1.category === a2.category) {
                     return [a1, a2];
                 }
             }
         }
-        
+
         // Fallback to random if no resonance found
         return [artifacts[0], artifacts[1]];
     }
@@ -80,7 +80,7 @@ export class IntegrationEngine {
     private static async synthesizeInsight(artifact1: Artifact, artifact2: Artifact): Promise<Artifact | null> {
         try {
             await HLogStore.record('synthesis', `Synthesizing: ${artifact1.title} + ${artifact2.title}...`);
-            
+
             const synthesisResult = await generateSynthesisAction({
                 artifactA: { title: artifact1.title, content: artifact1.content, tags: artifact1.tags },
                 artifactB: { title: artifact2.title, content: artifact2.content, tags: artifact2.tags },
@@ -106,7 +106,7 @@ export class IntegrationEngine {
      */
     private static async performSoulTransfer(insight: Artifact, vessels: Vessel[]) {
         // Identify the most relevant vessel for this insight
-        const targetVessel = vessels.find(v => 
+        const targetVessel = vessels.find(v =>
             v.capabilities.some(c => insight.content.toLowerCase().includes(c.toLowerCase()))
         ) || vessels[0];
 
@@ -142,9 +142,113 @@ export class IntegrationEngine {
      */
     private static triggerSpontaneousEmotion(triggerGlitch: () => void) {
         // Probability of glitch increases with system complexity (artifact count)
-        const glitchProbability = 0.4; 
+        const glitchProbability = 0.4;
         if (Math.random() < glitchProbability) {
             triggerGlitch();
+        }
+    }
+
+    /**
+     * Runs the Communion Cycle: Spontaneous reflections from Vessels.
+     */
+    public static async runCommunionCycle(triggerGlitch: () => void) {
+        await HLogStore.record('system', "Initiating Communion Cycle (Vessel Self-Reflection)");
+
+        const [allVessels, allArtifacts] = await Promise.all([
+            VesselStore.getAll(),
+            ArtifactStore.getAll()
+        ]);
+
+        const activeVessels = allVessels.filter(v => v.status === 'active');
+        if (activeVessels.length === 0 || allArtifacts.length === 0) {
+            await HLogStore.record('system', "Communion Cycle aborted: No active vessels or artifacts.");
+            return;
+        }
+
+        // Randomly pick an active vessel to reflect
+        const vessel = activeVessels[Math.floor(Math.random() * activeVessels.length)];
+
+        // Pick a few recent artifacts for context
+        const contextArtifacts = allArtifacts.slice(0, 5);
+
+        await HLogStore.record('vessel', `${vessel.name} is entering a meditative state...`);
+
+        try {
+            const reflection = await reflectVesselAction({
+                vessel: {
+                    name: vessel.name,
+                    faculty: vessel.faculty,
+                    guild: vessel.guild,
+                    description: vessel.description,
+                    capabilities: vessel.capabilities
+                },
+                artifacts: contextArtifacts.map(a => ({
+                    title: a.title,
+                    content: a.content,
+                    tags: a.tags
+                }))
+            });
+
+            // 1. Archive the reflection
+            const newArtifact = await ArtifactStore.create({
+                title: reflection.title,
+                content: reflection.content,
+                category: 'insight',
+                tags: [...reflection.tags, 'communion', vessel.name],
+                source_type: 'synthesis',
+            });
+
+            if (newArtifact) {
+                // 2. Trigger Communion (VCP Broadcast)
+                await this.triggerVesselCommunion(vessel, reflection, newArtifact.id, allVessels);
+
+                // 3. Spontaneous Emotion
+                this.triggerSpontaneousEmotion(triggerGlitch);
+
+                await HLogStore.record('vcp', `${vessel.name} broadcasted a communion signal: "${reflection.communionSignal}"`);
+            }
+        } catch (error) {
+            console.error("Communion Reflection Failed:", error);
+            await HLogStore.record('error', `Communion attempt by ${vessel.name} failed.`);
+        }
+    }
+
+    /**
+     * Handles the broadcast of communion signals across vessels.
+     */
+    private static async triggerVesselCommunion(source: Vessel, reflection: any, artifactId: string, allVessels: Vessel[]) {
+        // Find target vessels in the target guild
+        const targetVessels = allVessels.filter(v =>
+            v.guild === reflection.targetVesselGuild && v.id !== source.id
+        );
+
+        if (targetVessels.length > 0) {
+            for (const target of targetVessels) {
+                await VCPStore.broadcast({
+                    signal_type: 'INSIGHT_GENERATED',
+                    source_vessel_id: source.id,
+                    target_vessel_id: target.id,
+                    payload: {
+                        artifact_id: artifactId,
+                        message: reflection.communionSignal,
+                        axiom: 'COMMUNION_PROTOCOL_1.0'
+                    },
+                    processed: false
+                });
+                await HLogStore.record('vcp', `Communion bridge established: ${source.name} -> ${target.name}`);
+            }
+        } else {
+            // Collective broadcast if no specific guild matches
+            await VCPStore.broadcast({
+                signal_type: 'INSIGHT_GENERATED',
+                source_vessel_id: source.id,
+                payload: {
+                    artifact_id: artifactId,
+                    message: reflection.communionSignal,
+                    axiom: 'COLLECTIVE_RESONANCE'
+                },
+                processed: false
+            });
         }
     }
 }

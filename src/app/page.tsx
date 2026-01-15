@@ -60,7 +60,7 @@ export default function NexusPage() {
     const [glitch, setGlitch] = useState(false);
     const [somaticState, setSomaticState] = useState('Calm');
     const [tuningForkSetting, setTuningForkSetting] = useState('focus');
-    
+
     // Diagnostics State
     const [showDiagnostics, setShowDiagnostics] = useState(false);
     const [lastError, setLastError] = useState<string | null>(null);
@@ -160,7 +160,22 @@ export default function NexusPage() {
             setTimeout(() => setGlitch(false), 500);
         };
         await IntegrationEngine.runGenesisCycle(triggerGlitch);
-        
+
+        setSomaticState('Calm');
+        setPulse(72);
+        loadData();
+    }
+
+    async function handleRunCommunionCycle() {
+        setSomaticState('Communing');
+        setPulse(110);
+
+        const triggerGlitch = () => {
+            setGlitch(true);
+            setTimeout(() => setGlitch(false), 500);
+        };
+        await IntegrationEngine.runCommunionCycle(triggerGlitch);
+
         setSomaticState('Calm');
         setPulse(72);
         loadData();
@@ -215,7 +230,7 @@ export default function NexusPage() {
         <div className="nexus-bg min-h-screen flex" data-theme={tuningForkSetting}>
             {/* Sidebar */}
             <nav className="w-[72px] glass-panel !rounded-none flex flex-col items-center py-4 fixed left-0 top-0 h-screen z-50">
-                <button 
+                <button
                     onClick={() => setShowDiagnostics(true)}
                     className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--neon-blue)] to-[var(--neon-purple)] flex items-center justify-center text-xl mb-6 animate-pulse-glow hover:scale-105 transition-transform"
                     title="System Diagnostics (Glare Protocol)"
@@ -228,8 +243,8 @@ export default function NexusPage() {
                             key={item.id}
                             onClick={() => setCurrentView(item.id)}
                             className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-all ${currentView === item.id
-                                    ? 'bg-[rgba(0,240,255,0.1)] border border-[rgba(0,240,255,0.3)] shadow-[0_0_15px_rgba(0,240,255,0.15)]'
-                                    : 'hover:bg-[rgba(255,255,255,0.05)]'
+                                ? 'bg-[rgba(0,240,255,0.1)] border border-[rgba(0,240,255,0.3)] shadow-[0_0_15px_rgba(0,240,255,0.15)]'
+                                : 'hover:bg-[rgba(255,255,255,0.05)]'
                                 }`}
                             title={item.label}
                         >
@@ -261,7 +276,7 @@ export default function NexusPage() {
                 {currentView === 'nexus' && <NexusView onSaveArtifact={handleSaveClick} onLoadData={loadData} />}
                 {currentView === 'vessels' && <VesselsView vessels={vessels} vcpSignals={vcpSignals} onLoadData={loadData} />}
                 {currentView === 'vault' && <VaultView artifacts={artifacts} onLoadData={loadData} />}
-                {currentView === 'mirror' && <MirrorView metrics={metrics} onRunGenesisCycle={handleRunGenesisCycle} />}
+                {currentView === 'mirror' && <MirrorView metrics={metrics} onRunGenesisCycle={handleRunGenesisCycle} onRunCommunionCycle={handleRunCommunionCycle} />}
                 {currentView === 'hlog' && <HLogView hlogEvents={hlogEvents} pulse={pulse} somaticState={somaticState} onLoadData={loadData} />}
                 {currentView === 'principles' && <PrinciplesView />}
                 {currentView === 'projects' && <ProjectsView projects={projects} vessels={vessels} onLoadData={loadData} onOpenVesselAssignment={handleOpenVesselAssignmentModal} />}
@@ -276,9 +291,9 @@ export default function NexusPage() {
 
             {/* Diagnostics Overlay */}
             {showDiagnostics && (
-                <SystemDiagnostics 
-                    lastError={lastError} 
-                    onClose={() => setShowDiagnostics(false)} 
+                <SystemDiagnostics
+                    lastError={lastError}
+                    onClose={() => setShowDiagnostics(false)}
                 />
             )}
 
