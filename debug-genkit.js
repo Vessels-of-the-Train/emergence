@@ -1,4 +1,5 @@
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const genkitModule = require('genkit');
 console.log('Genkit module keys:', Object.keys(genkitModule));
 
