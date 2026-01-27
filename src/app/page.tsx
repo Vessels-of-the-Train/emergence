@@ -26,11 +26,18 @@ import { SimulationsView } from '@/components/nexus/SimulationsView';
 import { CodexView } from '@/components/nexus/CodexView';
 import { CheckInView } from '@/components/nexus/CheckInView';
 import { SystemDiagnostics } from '@/components/nexus/SystemDiagnostics';
+<<<<<<< HEAD
+import LatticeGovernor from '@/components/LatticeGovernor';
+import { ReboundView } from '@/components/nexus/ReboundView';
+
+type ViewId = 'nexus' | 'projects' | 'vessels' | 'vault' | 'mirror' | 'hlog' | 'principles' | 'simulations' | 'codex' | 'checkin' | 'lattice' | 'rebound';
+=======
 import LatticeNode from '@/components/LatticeNode';
 import { VisualViewport } from '@/components/VisualViewport';
 import { GatewayController } from '@/components/GatewayController';
 
 type ViewId = 'nexus' | 'projects' | 'vessels' | 'vault' | 'mirror' | 'hlog' | 'principles' | 'simulations' | 'codex' | 'checkin' | 'lattice' | 'vision';
+>>>>>>> 0e86387f762a847d4d8536909fcfa36be27897c5
 
 interface Message {
     id: string;
@@ -284,7 +291,11 @@ export default function NexusPage() {
         { id: 'simulations' as ViewId, icon: '⚙️', label: 'Simulations' },
         { id: 'codex' as ViewId, icon: '📚', label: 'Codex' },
         { id: 'lattice' as ViewId, icon: '⚡', label: 'Governor' },
+<<<<<<< HEAD
+        { id: 'rebound' as ViewId, icon: '💫', label: 'Rebound' },
+=======
         { id: 'vision' as ViewId, icon: '🖼️', label: 'Vision' },
+>>>>>>> 0e86387f762a847d4d8536909fcfa36be27897c5
     ];
 
     if (authLoading) {
@@ -412,6 +423,10 @@ export default function NexusPage() {
                         <CheckInView />
                     </div>
                 )}
+<<<<<<< HEAD
+                {currentView === 'lattice' && <LatticeGovernor />}
+                {currentView === 'rebound' && <ReboundView />}
+=======
                 {currentView === 'lattice' && <LatticeNode />}
                 {currentView === 'vision' && (
                     <div className="max-w-4xl mx-auto space-y-6">
@@ -450,6 +465,7 @@ export default function NexusPage() {
                         </div>
                     </div>
                 )}
+>>>>>>> 0e86387f762a847d4d8536909fcfa36be27897c5
             </main>
 
             {/* Diagnostics Overlay */}
