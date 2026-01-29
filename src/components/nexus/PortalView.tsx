@@ -7,8 +7,6 @@ import {
     Users,
     ShieldCheck,
     Activity,
-    History,
-    Send,
     ArrowRight,
     Search,
     Zap

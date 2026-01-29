@@ -63,6 +63,7 @@ export function PublisherView({ onBack }: { onBack: () => void }) {
                         <button
                             onClick={onBack}
                             className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white"
+                            title="Back to Evolution List"
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </button>
@@ -174,7 +175,7 @@ export function PublisherView({ onBack }: { onBack: () => void }) {
                         <div className="flex flex-col items-center justify-center flex-1 bg-gray-900/20 border border-dashed border-white/10 rounded-3xl text-gray-600">
                             <Layers className="w-12 h-12 mb-4 opacity-20" />
                             <p className="text-lg">Select an idea from the sidebar to begin synthesis.</p>
-                            <p className="text-sm">Only ideas in the "Ingested" state can be published.</p>
+                            <p className="text-sm">Only ideas in the &quot;Ingested&quot; state can be published.</p>
                         </div>
                     )}
                 </div>

@@ -510,8 +510,11 @@ export default function NexusPage() {
                                 <h3 className="text-lg font-medium mb-4">Save Artifact</h3>
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="text-sm text-[var(--text-muted)]">Title</label>
+                                        <label htmlFor="artifact-title" className="text-sm text-[var(--text-muted)]">Title</label>
                                         <input
+                                            id="artifact-title"
+                                            title="Artifact Title"
+                                            placeholder="Enter a title for this insight..."
                                             type="text"
                                             value={artifactToSave.title}
                                             onChange={e => setArtifactToSave({ ...artifactToSave, title: e.target.value })}
@@ -519,16 +522,21 @@ export default function NexusPage() {
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-sm text-[var(--text-muted)]">Content</label>
+                                        <label htmlFor="artifact-content" className="text-sm text-[var(--text-muted)]">Content</label>
                                         <textarea
+                                            id="artifact-content"
+                                            title="Artifact Content"
+                                            placeholder="Describe the insight or metadata..."
                                             value={artifactToSave.content}
                                             onChange={e => setArtifactToSave({ ...artifactToSave, content: e.target.value })}
                                             className="glass-input w-full h-32"
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-sm text-[var(--text-muted)]">Category</label>
+                                        <label htmlFor="artifact-category" className="text-sm text-[var(--text-muted)]">Category</label>
                                         <select
+                                            id="artifact-category"
+                                            title="Artifact Category"
                                             value={artifactToSave.category}
                                             onChange={e => setArtifactToSave({ ...artifactToSave, category: e.target.value as Artifact['category'] })}
                                             className="glass-input w-full"
@@ -541,8 +549,11 @@ export default function NexusPage() {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="text-sm text-[var(--text-muted)]">Tags (comma-separated)</label>
+                                        <label htmlFor="artifact-tags" className="text-sm text-[var(--text-muted)]">Tags (comma-separated)</label>
                                         <input
+                                            id="artifact-tags"
+                                            title="Artifact Tags"
+                                            placeholder="nexus, evolution, synthesis..."
                                             type="text"
                                             value={artifactToSave.tags?.join(', ')}
                                             onChange={e => setArtifactToSave({ ...artifactToSave, tags: e.target.value.split(',').map(t => t.trim()) })}
@@ -550,8 +561,10 @@ export default function NexusPage() {
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-sm text-[var(--text-muted)]">Source Link (Google Drive)</label>
+                                        <label htmlFor="artifact-source" className="text-sm text-[var(--text-muted)]">Source Link (Google Drive)</label>
                                         <input
+                                            id="artifact-source"
+                                            title="Source Link"
                                             type="text"
                                             placeholder="https://docs.google.com/..."
                                             value={artifactToSave.sourceLink || ''}
