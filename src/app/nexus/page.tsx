@@ -6,10 +6,11 @@
  */
 
 import { useState, useEffect } from 'react';
-import { VesselStore, ArtifactStore, HLogStore, MirrorStore, ProjectStore, type Vessel, type Artifact, type HLogEvent, type Project } from '@/lib/nexus-store';
+import { VesselStore, ArtifactStore, HLogStore, MirrorStore, ProjectStore, VCPStore, type Vessel, type Artifact, type HLogEvent, type Project, type VCPSignal } from '@/lib/nexus-store';
 import { generateVesselResponse } from '@/ai/flows/vessel-response';
 import { WalletButton } from '@/components/solana/WalletButton';
 import { ArtifactCard } from '@/components/artifacts/ArtifactCard';
+import { VCPSignalWidget } from '@/components/nexus/VCPSignalWidget';
 
 type ViewId = 'nexus' | 'projects' | 'vessels' | 'vault' | 'mirror' | 'hlog' | 'principles';
 
@@ -30,6 +31,7 @@ export default function NexusPage() {
     const [artifacts, setArtifacts] = useState<Artifact[]>([]);
     const [projects, setProjects] = useState<Project[]>([]);
     const [hlogEvents, setHlogEvents] = useState<HLogEvent[]>([]);
+    const [vcpSignals, setVcpSignals] = useState<VCPSignal[]>([]);
     const [metrics, setMetrics] = useState<{
         knowledgeDensity: number;
         vesselEfficiency: number;
@@ -69,17 +71,19 @@ export default function NexusPage() {
     }, []);
 
     async function loadData() {
-        const [v, a, p, e, m] = await Promise.all([
+        const [v, a, p, e, s, m] = await Promise.all([
             VesselStore.getAll(),
             ArtifactStore.getAll(),
             ProjectStore.getAll(),
             HLogStore.getRecent(),
+            VCPStore.getPending(),
             MirrorStore.calculateMetrics(),
         ]);
         setVessels(v);
         setArtifacts(a);
         setProjects(p);
         setHlogEvents(e);
+        setVcpSignals(s);
         setMetrics(m);
     }
 
@@ -227,31 +231,36 @@ export default function NexusPage() {
                                 )}
                             </select>
                         </div>
-                        <div className="flex-1 overflow-y-auto space-y-4 pr-2">
-                            {messages.map((msg) => (
-                                <div key={msg.id} className={`flex gap-3 ${msg.type === 'user' ? 'justify-end' : ''}`}>
-                                    {msg.type === 'ai' && (
-                                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--neon-purple)] to-[var(--neon-blue)] flex items-center justify-center text-sm flex-shrink-0">
-                                            {msg.vesselEmoji}
+                        <div className="flex-1 overflow-y-auto space-y-4 pr-2 flex gap-4">
+                            <div className="flex-1 space-y-4">
+                                {messages.map((msg) => (
+                                    <div key={msg.id} className={`flex gap-3 ${msg.type === 'user' ? 'justify-end' : ''}`}>
+                                        {msg.type === 'ai' && (
+                                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--neon-purple)] to-[var(--neon-blue)] flex items-center justify-center text-sm flex-shrink-0">
+                                                {msg.vesselEmoji}
+                                            </div>
+                                        )}
+                                        <div className={`max-w-[70%] p-3 rounded-xl ${msg.type === 'user'
+                                            ? 'bg-[rgba(0,240,255,0.1)] border border-[rgba(0,240,255,0.2)]'
+                                            : 'bg-[var(--glass-bg)] border border-[var(--glass-border)]'
+                                            }`}>
+                                            {msg.type === 'ai' && <div className="text-xs text-[var(--text-muted)] mb-1">{msg.vessel}</div>}
+                                            <p className="text-sm leading-relaxed whitespace-pre-wrap text-[var(--text-primary)]">{msg.text}</p>
                                         </div>
-                                    )}
-                                    <div className={`max-w-[70%] p-3 rounded-xl ${msg.type === 'user'
-                                        ? 'bg-[rgba(0,240,255,0.1)] border border-[rgba(0,240,255,0.2)]'
-                                        : 'bg-[var(--glass-bg)] border border-[var(--glass-border)]'
-                                        }`}>
-                                        {msg.type === 'ai' && <div className="text-xs text-[var(--text-muted)] mb-1">{msg.vessel}</div>}
-                                        <p className="text-sm leading-relaxed whitespace-pre-wrap text-[var(--text-primary)]">{msg.text}</p>
                                     </div>
-                                </div>
-                            ))}
-                            {isLoading && (
-                                <div className="flex gap-3">
-                                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--neon-purple)] to-[var(--neon-blue)] flex items-center justify-center animate-pulse">🌀</div>
-                                    <div className="bg-[var(--glass-bg)] border border-[var(--glass-border)] p-3 rounded-xl">
-                                        <p className="text-sm text-[var(--text-muted)]">Synthesizing response...</p>
+                                ))}
+                                {isLoading && (
+                                    <div className="flex gap-3">
+                                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--neon-purple)] to-[var(--neon-blue)] flex items-center justify-center animate-pulse">🌀</div>
+                                        <div className="bg-[var(--glass-bg)] border border-[var(--glass-border)] p-3 rounded-xl">
+                                            <p className="text-sm text-[var(--text-muted)]">Synthesizing response...</p>
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
+                            </div>
+                            <div className="w-80 flex-shrink-0 hidden xl:block">
+                                <VCPSignalWidget signals={vcpSignals} vessels={vessels} />
+                            </div>
                         </div>
                         <div className="flex gap-3 mt-4 pt-4 border-t border-[var(--glass-border)]">
                             <input
