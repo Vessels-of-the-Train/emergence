@@ -1,8 +1,6 @@
-'use client';
-
 import { useState } from 'react';
 import { generateVesselResponse } from '@/ai/flows/vessel-response';
-import { HLogStore } from '@/lib/nexus-store';
+import { HLogStore, type Vessel } from '@/lib/nexus-store';
 import { Volume2 } from 'lucide-react';
 
 interface Message {
@@ -15,11 +13,12 @@ interface Message {
 }
 
 interface NexusViewProps {
+    vessels: Vessel[];
     onSaveArtifact: (message: Message) => void;
     onLoadData: () => void;
 }
 
-export function NexusView({ onSaveArtifact, onLoadData }: NexusViewProps) {
+export function NexusView({ vessels, onSaveArtifact, onLoadData }: NexusViewProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [selectedVessel, setSelectedVessel] = useState('global');
@@ -64,10 +63,10 @@ export function NexusView({ onSaveArtifact, onLoadData }: NexusViewProps) {
             };
             setMessages(prev => [...prev, aiMessage]);
             await HLogStore.record('insight', `${response.vesselName} responded to query`);
-            
+
             // Auto-speak (optional, kept manual for now to avoid annoyance)
             // speakMessage(response.response);
-            
+
             onLoadData();
         } catch (error) {
             console.error('Error generating response:', error);
@@ -92,15 +91,12 @@ export function NexusView({ onSaveArtifact, onLoadData }: NexusViewProps) {
                 <select
                     value={selectedVessel}
                     onChange={(e) => setSelectedVessel(e.target.value)}
-                    className="glass-input w-auto"
+                    className="glass-input w-auto text-xs"
                 >
-                    <option value="global">Global Context</option>
-                    <option value="daystrom">Daystrom</option>
-                    <option value="logos">Logos</option>
-                    <option value="adam">Adam</option>
-                    <option value="weaver">Weaver</option>
-                    <option value="scribe">Scribe</option>
-                    <option value="glare">Glare</option>
+                    <option value="global">🌀 The Nexus (Global)</option>
+                    {vessels.map(v => (
+                        <option key={v.id} value={v.id.toLowerCase()}>{v.emoji} {v.name}</option>
+                    ))}
                 </select>
             </div>
             <div className="flex-1 overflow-y-auto space-y-4 pr-2">

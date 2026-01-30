@@ -412,7 +412,7 @@ export default function NexusPage() {
                             ideaCount={7} // Hardcoded based on nexus-ideas.ts length
                         />
                     )}
-                    {currentView === 'nexus' && <NexusView onSaveArtifact={handleSaveClick} onLoadData={loadData} />}
+                    {currentView === 'nexus' && <NexusView vessels={vessels} onSaveArtifact={handleSaveClick} onLoadData={loadData} />}
                     {currentView === 'vessels' && <VesselsView vessels={vessels} vcpSignals={vcpSignals} onLoadData={loadData} />}
                     {currentView === 'vault' && <VaultView artifacts={artifacts} onLoadData={loadData} />}
                     {currentView === 'mirror' && <MirrorView metrics={metrics} onRunGenesisCycle={handleRunGenesisCycle} onRunCommunionCycle={handleRunCommunionCycle} />}
