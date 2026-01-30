@@ -13,6 +13,9 @@ import {
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { VCPSignalWidget } from './VCPSignalWidget';
+import { HLogActivityWidget } from './HLogActivityWidget';
+import { VCPSignal, Vessel, HLogEvent } from '@/lib/nexus-store';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -23,9 +26,12 @@ interface PortalViewProps {
     systemMetrics: any;
     vesselCount: number;
     ideaCount: number;
+    vcpSignals: VCPSignal[];
+    vessels: Vessel[];
+    hlogEvents: HLogEvent[];
 }
 
-export function PortalView({ onNavigate, systemMetrics, vesselCount, ideaCount }: PortalViewProps) {
+export function PortalView({ onNavigate, systemMetrics, vesselCount, ideaCount, vcpSignals, vessels, hlogEvents }: PortalViewProps) {
     const mainHubs = [
         {
             id: 'nexus',
@@ -113,34 +119,41 @@ export function PortalView({ onNavigate, systemMetrics, vesselCount, ideaCount }
                 ))}
             </div>
 
-            {/* 3. Footer / Quick Access */}
-            <div className="flex flex-col md:flex-row gap-6">
-                <div className="flex-1 bg-white/5 border border-white/10 rounded-[2rem] p-8 flex items-center justify-between">
-                    <div>
-                        <h4 className="text-lg font-bold text-white mb-1">Quick Search</h4>
-                        <p className="text-xs text-gray-500">Query the collective intelligence of all ingested ideas.</p>
-                    </div>
-                    <div className="relative flex-1 max-w-sm ml-8">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
-                        <input
-                            type="text"
-                            placeholder="Type to search archive..."
-                            className="w-full bg-gray-950/50 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-sm text-white focus:border-blue-500 outline-none transition-colors"
-                        />
-                    </div>
-                </div>
+            {/* 3. Footer / Activity Monitors + Quick Access */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* VCP Signal Stream */}
+                <VCPSignalWidget signals={vcpSignals} vessels={vessels} />
 
-                <div className="flex gap-4">
-                    {quickActions.map((action) => (
-                        <button
-                            key={action.id}
-                            onClick={() => onNavigate(action.id)}
-                            className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 flex flex-col items-center justify-center gap-2 hover:bg-white/10 transition-all min-w-[100px]"
-                        >
-                            <action.icon className="w-5 h-5 text-gray-400" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{action.label}</span>
-                        </button>
-                    ))}
+                {/* System Activity Stream */}
+                <HLogActivityWidget events={hlogEvents} />
+
+                {/* Quick Actions */}
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+                    <h3 className="text-sm font-bold text-white mb-4">Quick Access</h3>
+                    <div className="grid grid-cols-3 gap-3">
+                        {quickActions.map((action) => (
+                            <button
+                                key={action.id}
+                                onClick={() => onNavigate(action.id)}
+                                className="bg-gray-950/50 border border-white/10 rounded-xl p-4 flex flex-col items-center justify-center gap-2 hover:bg-white/5 hover:border-white/20 transition-all"
+                            >
+                                <action.icon className="w-5 h-5 text-gray-400" />
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{action.label}</span>
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="mt-4 pt-4 border-t border-white/5">
+                        <h4 className="text-xs font-bold text-white mb-2">Quick Search</h4>
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+                            <input
+                                type="text"
+                                placeholder="Search archive..."
+                                className="w-full bg-gray-950/50 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-sm text-white focus:border-blue-500 outline-none transition-colors"
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

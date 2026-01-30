@@ -92,6 +92,7 @@ export function NexusView({ vessels, onSaveArtifact, onLoadData }: NexusViewProp
                     value={selectedVessel}
                     onChange={(e) => setSelectedVessel(e.target.value)}
                     className="glass-input w-auto text-xs"
+                    title="Select AI Vessel"
                 >
                     <option value="global">🌀 The Nexus (Global)</option>
                     {vessels.map(v => (

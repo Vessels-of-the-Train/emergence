@@ -410,6 +410,9 @@ export default function NexusPage() {
                             systemMetrics={metrics}
                             vesselCount={vessels.length}
                             ideaCount={7} // Hardcoded based on nexus-ideas.ts length
+                            vcpSignals={vcpSignals}
+                            vessels={vessels}
+                            hlogEvents={hlogEvents}
                         />
                     )}
                     {currentView === 'nexus' && <NexusView vessels={vessels} onSaveArtifact={handleSaveClick} onLoadData={loadData} />}
